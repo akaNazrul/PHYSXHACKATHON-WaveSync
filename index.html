@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WaveSync — Real-Time Wave Interference Simulator</title>
+  <link rel="stylesheet" href="./styles/main.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Interactive Canvas Viewer -->
+    <main class="canvas-container" id="canvas-container">
+      <canvas id="canvas-main" width="400" height="400"></canvas>
+      <div id="source-a-indicator" class="source-indicator" title="Source A"></div>
+      <div id="source-b-indicator" class="source-indicator" title="Source B"></div>
+    </main>
+
+    <!-- Side Control Panel -->
+    <aside class="control-panel">
+      <div class="panel-header">
+        <h1>WaveSync</h1>
+        <div class="header-actions">
+          <button id="btn-info" class="icon-btn" title="Toggle Equations" aria-label="Toggle Equations">
+            <i data-lucide="info"></i>
+          </button>
+          <button id="btn-reset" class="icon-btn" title="Reset Simulation" aria-label="Reset">
+            <i data-lucide="rotate-ccw"></i>
+          </button>
+          <button id="btn-export" class="icon-btn" title="Export PNG" aria-label="Export">
+            <i data-lucide="download"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Equation Feed -->
+      <div id="equation-display" class="equation-panel section">
+        <div class="equation-line">
+          Ψ(r,t) = 
+          <span class="equation-var-a">A₁</span>sin(kr₁ - ωt + <span class="equation-var-a">φ₁</span>) + 
+          <span class="equation-var-b">A₂</span>sin(kr₂ - ωt + <span class="equation-var-b">φ₂</span>)
+        </div>
+        <div class="equation-line" style="font-size:10px; margin-top:8px;" id="eq-values">
+          <!-- Dynamic rendering here -->
+        </div>
+      </div>
+
+      <!-- Source A Controls -->
+      <div class="section">
+        <div class="section-title">
+          <div class="title-dot a"></div>
+          Source A
+        </div>
+        <div class="control-group">
+          <div class="control-header">
+            <label for="freq-a">Frequency (Hz)</label>
+            <span class="val-display" id="val-freq-a">2.0</span>
+          </div>
+          <input type="range" id="freq-a" class="source-a control-slider" min="0.5" max="5.0" step="0.1" value="2.0">
+        </div>
+        <div class="control-group">
+          <div class="control-header">
+            <label for="amp-a">Amplitude</label>
+            <span class="val-display" id="val-amp-a">1.0</span>
+          </div>
+          <input type="range" id="amp-a" class="source-a control-slider" min="0.1" max="2.0" step="0.1" value="1.0">
+        </div>
+        <div class="control-group">
+          <div class="control-header">
+            <label for="phase-a">Phase (°)</label>
+            <span class="val-display" id="val-phase-a">0</span>
+          </div>
+          <input type="range" id="phase-a" class="source-a control-slider" min="0" max="360" step="5" value="0">
+        </div>
+      </div>
+
+      <!-- Source B Controls -->
+      <div class="section">
+        <div class="section-title">
+          <div class="title-dot b"></div>
+          Source B
+        </div>
+        <div class="control-group">
+          <div class="control-header">
+            <label for="freq-b">Frequency (Hz)</label>
+            <span class="val-display" id="val-freq-b">2.0</span>
+          </div>
+          <input type="range" id="freq-b" class="source-b control-slider" min="0.5" max="5.0" step="0.1" value="2.0">
+        </div>
+        <div class="control-group">
+          <div class="control-header">
+            <label for="amp-b">Amplitude</label>
+            <span class="val-display" id="val-amp-b">1.0</span>
+          </div>
+          <input type="range" id="amp-b" class="source-b control-slider" min="0.1" max="2.0" step="0.1" value="1.0">
+        </div>
+        <div class="control-group">
+          <div class="control-header">
+            <label for="phase-b">Phase (°)</label>
+            <span class="val-display" id="val-phase-b">0</span>
+          </div>
+          <input type="range" id="phase-b" class="source-b control-slider" min="0" max="360" step="5" value="0">
+        </div>
+      </div>
+
+      <!-- Presets -->
+      <div class="section" style="border-bottom:none">
+        <div class="section-title" style="color: var(--color-ui-text)">Presets</div>
+        <div class="btn-group">
+          <button id="preset-youngs" class="btn">
+            <i data-lucide="waves" width="14" height="14"></i> Young's Double-Slit
+          </button>
+          <button id="preset-noise" class="btn">
+            <i data-lucide="headphones" width="14" height="14"></i> Noise Cancellation
+          </button>
+          <button id="preset-wifi" class="btn">
+            <i data-lucide="wifi" width="14" height="14"></i> Wi-Fi Array (Beamforming)
+          </button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

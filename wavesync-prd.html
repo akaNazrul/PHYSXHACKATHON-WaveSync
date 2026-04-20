@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>WaveSync — Product Requirements Document</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --ink: #0e0d0b;
+    --ink-2: #3a3830;
+    --ink-3: #6b6860;
+    --paper: #f5f2ec;
+    --paper-2: #ede9e1;
+    --paper-3: #e2ddd4;
+    --wave: #1a6b5a;
+    --wave-light: #d4ede8;
+    --wave-mid: #4a9b88;
+    --accent: #c9420a;
+    --accent-light: #fce8e0;
+    --purple: #4a3d8f;
+    --purple-light: #e8e5f8;
+    --rule: 1px solid #c8c3ba;
+    --gap: 2rem;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .cover {
+    min-height: 100vh;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 5rem 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 79px,
+      rgba(255,255,255,0.03) 80px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 79px,
+      rgba(255,255,255,0.03) 80px
+    );
+  }
+
+  .cover-tag {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--wave-mid);
+    margin-bottom: 4rem;
+    position: relative;
+  }
+
+  .cover-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(5rem, 14vw, 10rem);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    position: relative;
+  }
+
+  .cover-title span {
+    display: block;
+    color: var(--wave-mid);
+  }
+
+  .cover-subtitle {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 1.5rem;
+    color: rgba(245,242,236,0.5);
+    margin-top: 2rem;
+    max-width: 540px;
+    position: relative;
+  }
+
+  .cover-meta {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 2rem;
+    position: relative;
+  }
+
+  .cover-meta-item label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(245,242,236,0.35);
+    margin-bottom: 0.25rem;
+  }
+
+  .cover-meta-item span {
+    font-size: 12px;
+    color: rgba(245,242,236,0.75);
+  }
+
+  .doc {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+
+  .section {
+    border-top: var(--rule);
+    padding: 3rem 0;
+  }
+
+  .section:first-child { border-top: none; }
+
+  .section-header {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    align-items: baseline;
+  }
+
+  .section-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding-top: 0.15rem;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .section-body {
+    padding-left: 96px;
+  }
+
+  p {
+    color: var(--ink-2);
+    margin-bottom: 1rem;
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin: 2rem 0 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: var(--rule);
+  }
+
+  h3:first-child { margin-top: 0; }
+
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 3px;
+    margin-right: 6px;
+    margin-bottom: 6px;
+  }
+
+  .tag-wave { background: var(--wave-light); color: var(--wave); }
+  .tag-acc  { background: var(--accent-light); color: var(--accent); }
+  .tag-pur  { background: var(--purple-light); color: var(--purple); }
+  .tag-ink  { background: var(--paper-3); color: var(--ink-2); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 12px;
+  }
+
+  thead tr {
+    border-bottom: 2px solid var(--paper-3);
+  }
+
+  th {
+    text-align: left;
+    font-family: 'Syne', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding: 0.5rem 0.75rem 0.5rem 0;
+  }
+
+  td {
+    padding: 0.6rem 0.75rem 0.6rem 0;
+    border-bottom: 1px solid var(--paper-3);
+    color: var(--ink-2);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  td:first-child { color: var(--ink); font-weight: 500; }
+
+  .callout {
+    background: var(--paper-2);
+    border-left: 3px solid var(--wave);
+    padding: 1rem 1.25rem;
+    border-radius: 0 4px 4px 0;
+    margin: 1.5rem 0;
+    color: var(--ink-2);
+  }
+
+  .callout.accent {
+    border-left-color: var(--accent);
+  }
+
+  .callout strong {
+    font-weight: 500;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 0.25rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .stack {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--paper-3);
+    border: 1px solid var(--paper-3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 1rem 0;
+  }
+
+  .stack-item {
+    background: var(--paper);
+    padding: 1rem;
+  }
+
+  .stack-item label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 0.5rem;
+  }
+
+  .stack-item span {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--paper-3);
+    border: 1px solid var(--paper-3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 1rem 0;
+  }
+
+  .feature-item {
+    background: var(--paper);
+    padding: 1.25rem;
+  }
+
+  .feature-item .feat-num {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-item .feat-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.25rem;
+  }
+
+  .feature-item p {
+    font-size: 11px;
+    color: var(--ink-3);
+    margin: 0;
+  }
+
+  .file-tree {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 1.5rem;
+    border-radius: 4px;
+    font-size: 11px;
+    line-height: 2;
+    margin: 1rem 0;
+  }
+
+  .file-tree .dir { color: var(--wave-mid); }
+  .file-tree .file { color: rgba(245,242,236,0.6); }
+  .file-tree .comment { color: rgba(245,242,236,0.3); font-style: italic; }
+
+  .color-swatches {
+    display: flex;
+    gap: 12px;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+  }
+
+  .swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .swatch-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+
+  .swatch span {
+    font-size: 9px;
+    color: var(--ink-3);
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+
+  .user-story {
+    border: 1px solid var(--paper-3);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    background: var(--paper);
+  }
+
+  .user-story .role {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--wave);
+    margin-bottom: 0.35rem;
+  }
+
+  .user-story p {
+    margin: 0;
+    font-size: 12px;
+  }
+
+  .constraint-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--paper-3);
+  }
+
+  .constraint-row:last-child { border-bottom: none; }
+
+  .constraint-row .badge {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .badge-hard { background: var(--accent-light); color: var(--accent); }
+  .badge-soft { background: var(--wave-light); color: var(--wave); }
+  .badge-nice { background: var(--purple-light); color: var(--purple); }
+
+  .footer {
+    background: var(--ink);
+    color: rgba(245,242,236,0.35);
+    padding: 2rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .footer span:last-child { color: var(--wave-mid); }
+
+  @media print {
+    .cover { min-height: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── COVER ─────────────────────────────────────────────── -->
+<div class="cover">
+  <div class="cover-tag">Product Requirements Document · v1.0 · National PhysXHackathon 2026</div>
+  <div>
+    <div class="cover-title">
+      Wave<span>Sync</span>
+    </div>
+    <div class="cover-subtitle">
+      A real-time, interactive wave interference simulator that makes invisible physics visible.
+    </div>
+  </div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <label>Deadline</label>
+      <span>20 April 2026</span>
+    </div>
+    <div class="cover-meta-item">
+      <label>Track</label>
+      <span>Simulation / Modelling</span>
+    </div>
+    <div class="cover-meta-item">
+      <label>Auth Required</label>
+      <span>None</span>
+    </div>
+    <div class="cover-meta-item">
+      <label>Platform</label>
+      <span>Web (client-side)</span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── DOC BODY ──────────────────────────────────────────── -->
+<div class="doc">
+
+  <!-- 01 TITLE + PROBLEM -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <div class="section-title">Title &amp; Problem</div>
+    </div>
+    <div class="section-body">
+      <div class="callout">
+        <strong>Product Title</strong>
+        WaveSync — Real-Time Wave Interference Simulator
+      </div>
+      <h3>The Problem It Solves</h3>
+      <p>Wave interference is one of the most fundamental phenomena in physics — it governs acoustics, optics, quantum mechanics, wireless signals, and medical imaging. Yet for most students and learners, it exists only as a static equation in a textbook or a grainy classroom diagram.</p>
+      <p>There is no fast, frictionless tool that lets a user <em>feel</em> what happens when two waves collide — to instantly see the nodes, antinodes, and pressure fields shift as they change frequency, amplitude, or source position. Existing simulators are either locked behind clunky Java applets, require downloads, or are too academic to engage with quickly.</p>
+      <div class="callout accent">
+        <strong>Core Insight</strong>
+        WaveSync turns a two-variable physics equation into a tactile, real-time visual experience. Zero friction. No login. Open the URL and the physics is already alive on screen.
+      </div>
+      <h3>Real-World Angle</h3>
+      <p>Noise-cancelling headphones, 5G beamforming antenna arrays, ultrasound medical imaging, Wi-Fi dead zones in your home — all governed by wave interference. WaveSync is the explainer tool these conversations have always needed.</p>
+    </div>
+  </div>
+
+  <!-- 02 PRODUCT OVERVIEW -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <div class="section-title">Product Overview</div>
+    </div>
+    <div class="section-body">
+      <p>WaveSync is a fully client-side, browser-based physics simulation. The user opens the app, sees a live 2D interference heatmap generated by two configurable wave sources, and can manipulate every variable in real time. No backend, no database, no authentication — just physics rendered at 60fps.</p>
+      <table>
+        <thead><tr><th>Attribute</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Type</td><td>Single-page application (SPA)</td></tr>
+          <tr><td>Rendering</td><td>HTML Canvas 2D API</td></tr>
+          <tr><td>Physics</td><td>Superposition principle, 2D wave equation</td></tr>
+          <tr><td>Distribution</td><td>GitHub Pages / Vercel (static)</td></tr>
+          <tr><td>Target devices</td><td>Desktop browser primary (Chrome, Firefox, Safari)</td></tr>
+          <tr><td>Submission artifacts</td><td>GitHub repo, PDF report, 5-min demo video</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 03 TARGET USERS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <div class="section-title">Target Users</div>
+    </div>
+    <div class="section-body">
+      <table>
+        <thead><tr><th>Persona</th><th>Motivation</th><th>Key Need</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Physics undergrad</td>
+            <td>Wants to visualise what equations actually look like</td>
+            <td>Equation readout alongside the heatmap</td>
+          </tr>
+          <tr>
+            <td>Hackathon judge</td>
+            <td>Evaluating technical depth and presentation quality</td>
+            <td>Instant wow — demo must work in under 10 seconds</td>
+          </tr>
+          <tr>
+            <td>Engineering student</td>
+            <td>Applying wave theory to antennas, acoustics, optics</td>
+            <td>Preset real-world scenarios (Young's double-slit, Wi-Fi)</td>
+          </tr>
+          <tr>
+            <td>Curious non-physicist</td>
+            <td>Saw noise-cancelling headphones explained; wants to explore</td>
+            <td>Plain-language labels, no jargon to get started</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 04 USER STORIES -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">04</div>
+      <div class="section-title">User Stories</div>
+    </div>
+    <div class="section-body">
+      <div class="user-story">
+        <div class="role">Physics student</div>
+        <p>As a physics student, I want to drag wave sources around the canvas so that I can observe how spatial separation changes the interference pattern without doing mental maths.</p>
+      </div>
+      <div class="user-story">
+        <div class="role">Engineering student</div>
+        <p>As an engineering student, I want to load a "Young's Double-Slit" preset so that I can immediately see the classic textbook result and compare it to my own parameter changes.</p>
+      </div>
+      <div class="user-story">
+        <div class="role">Any user</div>
+        <p>As any user, I want to see the physics equations update live as I move sliders so that I understand what the maths actually represents visually.</p>
+      </div>
+      <div class="user-story">
+        <div class="role">Hackathon judge</div>
+        <p>As a judge watching a 5-minute video demo, I want the visual output to be immediately striking and self-explanatory so that I grasp the project's value in the first 30 seconds.</p>
+      </div>
+      <div class="user-story">
+        <div class="role">Team member</div>
+        <p>As a team member submitting to the hackathon, I want a PNG export button so that I can capture the simulation state for inclusion in our PDF report.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 KEY FEATURES + MVP -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">05</div>
+      <div class="section-title">Key Features &amp; MVP</div>
+    </div>
+    <div class="section-body">
+      <h3>MVP Feature Set (ships within 4 hours)</h3>
+      <div class="feature-grid">
+        <div class="feature-item">
+          <div class="feat-num">F-01</div>
+          <div class="feat-title">Live interference heatmap</div>
+          <p>Canvas renders superposition amplitude across a 2D grid. Colour ramp: deep blue (destructive) through black to bright amber (constructive).</p>
+        </div>
+        <div class="feature-item">
+          <div class="feat-num">F-02</div>
+          <div class="feat-title">Dual wave source control</div>
+          <p>Per-source sliders for frequency (0.5–5 Hz), amplitude (0.1–2), and phase offset (0–360°).</p>
+        </div>
+        <div class="feature-item">
+          <div class="feat-num">F-03</div>
+          <div class="feat-title">Drag-to-reposition sources</div>
+          <p>Click and drag either source dot on the canvas to reposition. Pattern updates immediately.</p>
+        </div>
+        <div class="feature-item">
+          <div class="feat-num">F-04</div>
+          <div class="feat-title">Equation info panel</div>
+          <p>Toggleable overlay showing the superposition formula with live variable substitution as sliders move.</p>
+        </div>
+        <div class="feature-item">
+          <div class="feat-num">F-05</div>
+          <div class="feat-title">Physics presets</div>
+          <p>Three one-click presets: Young's double-slit, noise cancellation, Wi-Fi antenna array. Instantly loads meaningful parameter sets.</p>
+        </div>
+        <div class="feature-item">
+          <div class="feat-num">F-06</div>
+          <div class="feat-title">PNG snapshot export</div>
+          <p>Single button downloads current canvas state as a timestamped PNG for report and video use.</p>
+        </div>
+      </div>
+
+      <h3>Post-MVP (if time permits)</h3>
+      <div class="callout">
+        <strong>Stretch goals</strong>
+        Animated time evolution of the wave field (toggle play/pause). Third wave source. Shareable URL encoding current parameters. Mobile touch support.
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 FUNCTIONAL REQUIREMENTS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">06</div>
+      <div class="section-title">Functional Requirements</div>
+    </div>
+    <div class="section-body">
+      <table>
+        <thead><tr><th>ID</th><th>Requirement</th><th>Priority</th></tr></thead>
+        <tbody>
+          <tr><td>FR-01</td><td>System shall compute the superposition amplitude at every canvas pixel using Ψ = A₁sin(kr₁ − ωt + φ₁) + A₂sin(kr₂ − ωt + φ₂)</td><td><span class="tag tag-acc">Must</span></td></tr>
+          <tr><td>FR-02</td><td>Canvas shall render at a minimum of 30fps on a standard laptop browser</td><td><span class="tag tag-acc">Must</span></td></tr>
+          <tr><td>FR-03</td><td>Slider input changes shall reflect on canvas within one animation frame</td><td><span class="tag tag-acc">Must</span></td></tr>
+          <tr><td>FR-04</td><td>Drag interaction on source positions shall update pattern continuously during drag</td><td><span class="tag tag-acc">Must</span></td></tr>
+          <tr><td>FR-05</td><td>Equation panel shall display current variable values substituted into formula notation</td><td><span class="tag tag-wave">Should</span></td></tr>
+          <tr><td>FR-06</td><td>Each preset shall restore a named, documented physics scenario</td><td><span class="tag tag-wave">Should</span></td></tr>
+          <tr><td>FR-07</td><td>Export button shall trigger browser download of canvas as PNG</td><td><span class="tag tag-wave">Should</span></td></tr>
+          <tr><td>FR-08</td><td>App shall function fully offline once loaded (no external runtime dependencies)</td><td><span class="tag tag-pur">Could</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 07 NON-FUNCTIONAL REQUIREMENTS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">07</div>
+      <div class="section-title">Non-Functional Requirements</div>
+    </div>
+    <div class="section-body">
+      <table>
+        <thead><tr><th>Category</th><th>Requirement</th></tr></thead>
+        <tbody>
+          <tr><td>Performance</td><td>Initial load under 2 seconds on a standard connection. Canvas computation under 16ms per frame (60fps budget).</td></tr>
+          <tr><td>Compatibility</td><td>Chrome 110+, Firefox 115+, Safari 16+. No IE or legacy browser support required.</td></tr>
+          <tr><td>Accessibility</td><td>All sliders shall have visible labels and ARIA attributes. Colour scheme shall have sufficient contrast for readout text.</td></tr>
+          <tr><td>Maintainability</td><td>Physics engine isolated in a single module with documented function signatures. Easy to swap rendering resolution.</td></tr>
+          <tr><td>Portability</td><td>Zero server-side dependencies. Deployable to any static file host (GitHub Pages, Vercel, Netlify).</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 TECH STACK -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">08</div>
+      <div class="section-title">Tech Stack &amp; Dependencies</div>
+    </div>
+    <div class="section-body">
+      <div class="stack">
+        <div class="stack-item"><label>Language</label><span>Vanilla JS (ES2022)</span></div>
+        <div class="stack-item"><label>Rendering</label><span>Canvas 2D API</span></div>
+        <div class="stack-item"><label>Physics</label><span>Custom engine</span></div>
+        <div class="stack-item"><label>Icons</label><span>Lucide (CDN)</span></div>
+        <div class="stack-item"><label>Fonts</label><span>DM Mono + Syne</span></div>
+        <div class="stack-item"><label>Build tool</label><span>None (plain HTML)</span></div>
+        <div class="stack-item"><label>Hosting</label><span>GitHub Pages</span></div>
+        <div class="stack-item"><label>Version control</label><span>GitHub (public)</span></div>
+        <div class="stack-item"><label>CI/CD</label><span>GitHub Actions</span></div>
+      </div>
+
+      <h3>External APIs</h3>
+      <p>None. Zero runtime API calls. All data is computed locally in the browser. This is a deliberate design choice — it makes the app fully offline-capable and eliminates network failure as a demo risk on hackathon day.</p>
+
+      <h3>Icons</h3>
+      <p>Lucide icon set loaded via CDN (<code>cdn.jsdelivr.net/npm/lucide@latest</code>). Used for control panel actions: play, pause, download, info, reset. No custom SVG assets required — eliminates design bottleneck.</p>
+    </div>
+  </div>
+
+  <!-- 09 UI DESIGN -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">09</div>
+      <div class="section-title">UI Design</div>
+    </div>
+    <div class="section-body">
+      <h3>Theme &amp; Mood</h3>
+      <p>Dark scientific instrument aesthetic. Think oscilloscope screen, not consumer app. The canvas is the centrepiece — it dominates the viewport. All controls are compact, monospace-typed, and recede to the edges so the physics is always the hero.</p>
+
+      <h3>Colour Palette</h3>
+      <div class="color-swatches">
+        <div class="swatch"><div class="swatch-box" style="background:#0a0c10"></div><span>Void<br>#0a0c10</span></div>
+        <div class="swatch"><div class="swatch-box" style="background:#111520"></div><span>Canvas bg<br>#111520</span></div>
+        <div class="swatch"><div class="swatch-box" style="background:#1a2540"></div><span>Panel bg<br>#1a2540</span></div>
+        <div class="swatch"><div class="swatch-box" style="background:#0d3b6e"></div><span>Destructive<br>#0d3b6e</span></div>
+        <div class="swatch"><div class="swatch-box" style="background:#f59e0b"></div><span>Constructive<br>#f59e0b</span></div>
+        <div class="swatch"><div class="swatch-box" style="background:#34d399"></div><span>Source A<br>#34d399</span></div>
+        <div class="swatch"><div class="swatch-box" style="background:#f472b6"></div><span>Source B<br>#f472b6</span></div>
+        <div class="swatch"><div class="swatch-box" style="background:#94a3b8"></div><span>UI text<br>#94a3b8</span></div>
+      </div>
+
+      <h3>Layout</h3>
+      <p>Two-column layout on desktop. Left column (70% width): the full-height Canvas rendering the interference heatmap. Right column (30% width): control panel with per-source sliders, preset buttons, and equation display. On narrower viewports, controls collapse below the canvas.</p>
+
+      <h3>Typography</h3>
+      <p>DM Mono throughout — reinforces the "scientific instrument" feel. Equation display uses a slightly larger monospace weight to feel like a readout. No serif, no sans-serif system fonts. Every label should feel like it was printed on a CRT display.</p>
+
+      <h3>Animation</h3>
+      <p>The heatmap itself is the primary animation — continuous colour transitions as wave patterns update. Source dots pulse subtly with a CSS keyframe ring to indicate they are draggable. Slider value changes trigger a 100ms canvas fade-in (prevents jarring cuts). No decorative animation beyond these functional moments.</p>
+
+      <h3>Icons (Lucide Animated)</h3>
+      <p>Use Lucide icons for: Download (export), Info (toggle equation panel), RotateCcw (reset to defaults), Play/Pause (if time animation is added). Icon size 16px, stroke 1.5px, colour inherits from parent — adapts cleanly to the dark panel background.</p>
+    </div>
+  </div>
+
+  <!-- 10 FILE STRUCTURE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">10</div>
+      <div class="section-title">File Structure</div>
+    </div>
+    <div class="section-body">
+      <div class="file-tree">
+        <div><span class="dir">wavesync/</span></div>
+        <div>&nbsp;&nbsp;<span class="file">index.html</span> <span class="comment">— app shell, imports all modules</span></div>
+        <div>&nbsp;&nbsp;<span class="dir">src/</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">main.js</span> <span class="comment">— entry point, bootstraps app</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">physics.js</span> <span class="comment">— wave equation, superposition engine</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">renderer.js</span> <span class="comment">— canvas paint loop, colour mapping</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">controls.js</span> <span class="comment">— slider bindings, drag interaction</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">presets.js</span> <span class="comment">— preset definitions (Young, noise, wifi)</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">exporter.js</span> <span class="comment">— PNG export via canvas.toDataURL</span></div>
+        <div>&nbsp;&nbsp;<span class="dir">styles/</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">main.css</span> <span class="comment">— layout, panel, slider theming</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">variables.css</span> <span class="comment">— colour tokens, spacing scale</span></div>
+        <div>&nbsp;&nbsp;<span class="dir">assets/</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">og-image.png</span> <span class="comment">— social preview (screenshot)</span></div>
+        <div>&nbsp;&nbsp;<span class="file">README.md</span> <span class="comment">— project overview, physics explanation</span></div>
+        <div>&nbsp;&nbsp;<span class="file">.github/workflows/deploy.yml</span> <span class="comment">— GitHub Actions → Pages</span></div>
+      </div>
+
+      <h3>Naming Patterns</h3>
+      <table>
+        <thead><tr><th>Type</th><th>Convention</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>JS files</td><td>camelCase noun</td><td>physics.js, renderer.js</td></tr>
+          <tr><td>CSS files</td><td>kebab-case</td><td>main.css, variables.css</td></tr>
+          <tr><td>JS functions</td><td>camelCase verb</td><td>computeSuperposition(), paintFrame()</td></tr>
+          <tr><td>JS constants</td><td>SCREAMING_SNAKE</td><td>CANVAS_WIDTH, DEFAULT_FREQ</td></tr>
+          <tr><td>CSS variables</td><td>--kebab-case</td><td>--color-constructive, --panel-width</td></tr>
+          <tr><td>DOM IDs</td><td>kebab-case</td><td>canvas-main, slider-freq-a</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 11 BACKEND + DATABASE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">11</div>
+      <div class="section-title">Backend &amp; Database</div>
+    </div>
+    <div class="section-body">
+      <div class="callout">
+        <strong>Architecture decision</strong>
+        WaveSync has no backend and no database. This is intentional and is a competitive advantage for this project — it eliminates all infrastructure risk, simplifies the GitHub submission, and makes the demo 100% reliable regardless of network conditions.
+      </div>
+      <h3>State Management</h3>
+      <p>All application state lives in a single JavaScript object in memory, updated by the control bindings and read by the renderer on each animation frame. No localStorage, no IndexedDB — the app resets to defaults on page load, which is the correct behaviour for a simulation tool.</p>
+      <table>
+        <thead><tr><th>State key</th><th>Type</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td>source[0].x, source[0].y</td><td>float</td><td>Canvas ¼ width, ½ height</td></tr>
+          <tr><td>source[1].x, source[1].y</td><td>float</td><td>Canvas ¾ width, ½ height</td></tr>
+          <tr><td>source[n].frequency</td><td>float (0.5–5)</td><td>2.0</td></tr>
+          <tr><td>source[n].amplitude</td><td>float (0.1–2)</td><td>1.0</td></tr>
+          <tr><td>source[n].phase</td><td>float (0–360)</td><td>0</td></tr>
+          <tr><td>ui.showEquations</td><td>boolean</td><td>true</td></tr>
+          <tr><td>ui.activePreset</td><td>string | null</td><td>null</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 12 CONSTRAINTS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">12</div>
+      <div class="section-title">Constraints</div>
+    </div>
+    <div class="section-body">
+      <div class="constraint-row">
+        <div class="badge badge-hard">Hard</div>
+        <div>Submission deadline is 20 April 2026. All features in the MVP scope must be complete and pushed to a public GitHub repo before midnight.</div>
+      </div>
+      <div class="constraint-row">
+        <div class="badge badge-hard">Hard</div>
+        <div>No IoT hardware, physical sensors, or external devices. Purely computational and browser-based.</div>
+      </div>
+      <div class="constraint-row">
+        <div class="badge badge-hard">Hard</div>
+        <div>Video demo must not exceed 5 minutes as per competition rules.</div>
+      </div>
+      <div class="constraint-row">
+        <div class="badge badge-soft">Soft</div>
+        <div>Canvas grid resolution capped at 400×400 cells to keep per-frame computation under 16ms on a mid-range laptop. Can be made configurable post-submission.</div>
+      </div>
+      <div class="constraint-row">
+        <div class="badge badge-soft">Soft</div>
+        <div>No build tools or bundlers — plain HTML/CSS/JS modules only. Reduces setup time from 30 minutes to zero.</div>
+      </div>
+      <div class="constraint-row">
+        <div class="badge badge-nice">Nice</div>
+        <div>Mobile touch support is desirable but not required for the preliminary round submission.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 13 SECURITY -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">13</div>
+      <div class="section-title">Security</div>
+    </div>
+    <div class="section-body">
+      <p>As a static, client-side-only application with no user data collection, no authentication, and no server communication, the attack surface is minimal by design. The following baseline measures apply:</p>
+      <table>
+        <thead><tr><th>Control</th><th>Implementation</th></tr></thead>
+        <tbody>
+          <tr><td>No user data stored</td><td>No localStorage, cookies, or analytics. No PII collected at any point.</td></tr>
+          <tr><td>No eval or dynamic code</td><td>All physics computation uses closed-form maths. No eval(), no Function() constructor.</td></tr>
+          <tr><td>Content Security Policy</td><td>GitHub Pages serves a strict CSP header blocking inline scripts beyond our own modules.</td></tr>
+          <tr><td>Dependency hygiene</td><td>Only one CDN dependency (Lucide icons). No npm packages with deep dependency trees.</td></tr>
+          <tr><td>Canvas export safety</td><td>canvas.toDataURL() creates a local data URL — no network request involved in export.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 14 AUTHENTICATION -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">14</div>
+      <div class="section-title">Authentication</div>
+    </div>
+    <div class="section-body">
+      <div class="callout">
+        <strong>No authentication required</strong>
+        WaveSync is a public, open-access tool. There are no user accounts, no sessions, no API keys, and no gated features. The decision is deliberate — maximum accessibility is a design principle, not an oversight. Any person with a browser URL can use the full product.
+      </div>
+    </div>
+  </div>
+
+  <!-- 15 INFRASTRUCTURE + CI/CD -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">15</div>
+      <div class="section-title">Infrastructure &amp; CI/CD</div>
+    </div>
+    <div class="section-body">
+      <h3>Hosting</h3>
+      <p>GitHub Pages — free, zero configuration for static sites. The public GitHub repository doubles as both the source code submission and the hosting platform, which perfectly satisfies the competition's GitHub link requirement.</p>
+
+      <h3>CI/CD Pipeline</h3>
+      <p>GitHub Actions workflow on every push to <code>main</code>:</p>
+      <table>
+        <thead><tr><th>Step</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>Trigger</td><td>Push to main branch</td></tr>
+          <tr><td>Lint</td><td>ESLint check on all .js files (non-blocking for MVP, informational only)</td></tr>
+          <tr><td>Deploy</td><td>actions/deploy-pages@v4 publishes root directory to GitHub Pages</td></tr>
+          <tr><td>Health check</td><td>curl the deployed URL, assert HTTP 200 response</td></tr>
+        </tbody>
+      </table>
+      <p>Total pipeline runtime: approximately 45 seconds. The live URL is always in sync with the main branch, which means the demo URL in the submission report always reflects the latest code.</p>
+    </div>
+  </div>
+
+  <!-- 16 TESTING -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">16</div>
+      <div class="section-title">Testing</div>
+    </div>
+    <div class="section-body">
+      <p>Given the 4-hour build window, formal automated testing is out of scope for the initial submission. Testing strategy is pragmatic and prioritises demo reliability.</p>
+      <table>
+        <thead><tr><th>Test type</th><th>Approach</th><th>When</th></tr></thead>
+        <tbody>
+          <tr><td>Physics unit test</td><td>Manual: verify superposition output at known constructive (same phase, same position) and destructive (opposite phase) configurations match expected amplitude values</td><td>After physics.js is written</td></tr>
+          <tr><td>Cross-browser smoke test</td><td>Manual: open in Chrome, Firefox, and Safari. Confirm canvas renders, sliders respond, export downloads</td><td>Hour 3 of build</td></tr>
+          <tr><td>Performance test</td><td>Chrome DevTools Performance tab: confirm frame time stays under 16ms at default canvas resolution</td><td>Hour 3 of build</td></tr>
+          <tr><td>Drag interaction test</td><td>Manual: drag both source dots to corners, edges, and centre. Confirm no out-of-bounds errors</td><td>After controls.js is written</td></tr>
+          <tr><td>Export test</td><td>Manual: click export, confirm PNG opens correctly, verify dimensions match canvas</td><td>After exporter.js is written</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 17 SCALABILITY -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">17</div>
+      <div class="section-title">Scalability</div>
+    </div>
+    <div class="section-body">
+      <p>WaveSync scales horizontally to unlimited concurrent users at zero cost — being a static site, each user's browser runs their own simulation independently. There is no server to scale.</p>
+      <h3>Computation Scalability</h3>
+      <p>The current physics engine is O(n²) where n is the canvas grid dimension. At 400×400 (160,000 cells), each frame takes approximately 8–12ms on a modern laptop — well within the 16ms budget. If higher resolution is desired, the computation can be offloaded to a Web Worker to prevent blocking the main thread, or partially parallelised using SharedArrayBuffer. These are clean post-submission improvements that require no architecture changes.</p>
+      <h3>Feature Scalability</h3>
+      <p>Adding a third wave source, 3D visualisation via WebGL, or a time-animation playback are all additive features that do not require restructuring the current module boundaries. The state object simply grows by one more source entry.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ─── FOOTER ─────────────────────────────────────────────── -->
+<div class="footer">
+  <span>WaveSync · PRD v1.0 · National PhysXHackathon 2026</span>
+  <span>Confidential — Team Submission Document</span>
+</div>
+
+</body>
+</html>
