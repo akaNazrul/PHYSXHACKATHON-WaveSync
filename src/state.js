@@ -9,7 +9,10 @@ export const DEFAULT_STATE = {
   ui: {
     showEquations: true,
     activePreset: null,
-    phone: { x: 200, y: 50 }
+    phone: { x: 200, y: 50 },
+    displayMode: 'waves',
+    slitWidth: 12,
+    slitSeparation: 40
   },
   time: 0
 };

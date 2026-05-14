@@ -11,20 +11,17 @@
   <div class="app-container">
     <!-- Interactive Canvas Viewer -->
     <main class="canvas-container" id="canvas-container">
-      <canvas id="canvas-main" width="400" height="400"></canvas>
-      
-      <!-- Champion Presets Overlays Layer -->
+      <div id="interactive-bounds" class="interactive-bounds">
+        <canvas id="canvas-main" width="400" height="400"></canvas>
+        
+        <!-- Champion Presets Overlays Layer -->
       <div id="overlay-layer" class="overlay-layer">
         
         <!-- Young's Double Slit Barrier -->
         <div id="overlay-youngs" class="preset-overlay">
-          <div class="slit-barrier">
-            <div class="barrier-segment top"></div>
-            <div class="slit-gap"></div>
-            <div class="barrier-segment middle"></div>
-            <div class="slit-gap"></div>
-            <div class="barrier-segment bottom"></div>
-          </div>
+          <svg id="slit-svg" width="100%" height="100%" viewBox="0 0 400 400" preserveAspectRatio="none">
+            <path id="slit-path" fill="none" stroke="rgba(255, 255, 255, 0.8)" stroke-width="4"></path>
+          </svg>
         </div>
 
         <!-- Noise Cancellation Headset -->
@@ -67,6 +64,7 @@
         <div class="signal-bar">
           <div id="phone-signal-fill" class="signal-fill"></div>
         </div>
+      </div>
       </div>
       
       <!-- Live Intensity Readout -->
@@ -177,7 +175,32 @@
 
       <!-- Presets -->
       <div class="section" style="border-bottom:none">
-        <div class="section-title" style="color: var(--color-ui-text)">Presets</div>
+        <div class="section-title" style="color: var(--color-ui-text)">Display Mode</div>
+        <div class="radio-settings" style="margin-bottom: 20px; display: flex; gap: 10px; font-size: 13px;">
+          <label><input type="radio" name="display-mode" value="waves" checked> Waves</label>
+          <label><input type="radio" name="display-mode" value="particles"> Particles</label>
+          <label><input type="radio" name="display-mode" value="both"> Both</label>
+        </div>
+
+        <div id="slit-controls" style="display: none;">
+          <div class="section-title" style="color: var(--color-ui-text)">Double Slit Properties</div>
+          <div class="control-group">
+            <div class="control-header">
+              <label for="slit-width">Slit Width</label>
+              <span class="val-display" id="val-slit-width">12</span>
+            </div>
+            <input type="range" id="slit-width" class="control-slider" min="4" max="40" step="1" value="12">
+          </div>
+          <div class="control-group">
+            <div class="control-header">
+              <label for="slit-sep">Slit Separation</label>
+              <span class="val-display" id="val-slit-sep">40</span>
+            </div>
+            <input type="range" id="slit-sep" class="control-slider" min="20" max="100" step="1" value="40">
+          </div>
+        </div>
+
+        <div class="section-title" style="color: var(--color-ui-text); margin-top: 20px;">Presets</div>
         <div class="btn-group">
           <button id="preset-youngs" class="btn">
             <i data-lucide="waves" width="14" height="14"></i> Young's Double-Slit

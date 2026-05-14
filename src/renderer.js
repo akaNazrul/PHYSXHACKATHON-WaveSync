@@ -11,6 +11,60 @@ let isReady = false;
 // Optimization: precalculating variables to prevent gc thrashing 
 let r, g, b, totalMaxAmplitude;
 
+// Particle System variables
+let particles = [];
+const NUM_PARTICLES = 400;
+
+class Particle {
+  constructor() {
+    this.reset();
+  }
+  reset() {
+    // Pick a random active source
+    const sourceIdx = Math.random() > 0.5 ? 0 : 1;
+    const source = state.sources[sourceIdx];
+    this.x = source.x;
+    this.y = source.y;
+    // Random direction
+    const angle = Math.random() * Math.PI * 2;
+    // Speed proportional to frequency roughly, but just constant for now
+    this.speed = Math.random() * 2 + 1;
+    this.vx = Math.cos(angle) * this.speed;
+    this.vy = Math.sin(angle) * this.speed;
+    this.life = Math.random() * 100 + 50;
+    this.maxLife = this.life;
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.life -= 1;
+    if (this.x < 0 || this.x > CANVAS_WIDTH || this.y < 0 || this.y > CANVAS_HEIGHT || this.life <= 0) {
+      this.reset();
+    }
+  }
+}
+
+export function drawSlitSVG() {
+  const slitSvg = document.getElementById('slit-svg');
+  const path = document.getElementById('slit-path');
+  if (!path) return;
+  
+  const width = state.ui.slitWidth;
+  const sep = state.ui.slitSeparation;
+  const midY = CANVAS_HEIGHT / 2;
+
+  const y1 = midY - sep/2 - width/2;
+  const y2 = midY - sep/2 + width/2;
+  const y3 = midY + sep/2 - width/2;
+  const y4 = midY + sep/2 + width/2;
+
+  path.setAttribute('d', `
+    M 200 0 L 200 ${y1}
+    M 200 ${y2} L 200 ${y3}
+    M 200 ${y4} L 200 ${CANVAS_HEIGHT}
+  `);
+}
+
 export function initRenderer() {
   canvas = document.getElementById('canvas-main');
   canvas.width = CANVAS_WIDTH;
@@ -24,6 +78,11 @@ export function initRenderer() {
   graphCanvas = document.getElementById('graph-canvas');
   if (graphCanvas) {
     graphCtx = graphCanvas.getContext('2d');
+  }
+
+  // Initialize Particles
+  for (let i = 0; i < NUM_PARTICLES; i++) {
+    particles.push(new Particle());
   }
 
   isReady = true;
@@ -44,41 +103,72 @@ export function paintFrame() {
 
   let offset = 0;
   
-  // Compute across 400x400 grid representing superposition
-  for (let y = 0; y < CANVAS_HEIGHT; y++) {
-    for (let x = 0; x < CANVAS_WIDTH; x++) {
-      
-      const amp = computeSuperposition(x, y, state.time);
-      
-      // Normalize amplitude between -1 to 1 regardless of amplitudes inputs for generic coloring mapping
-      let normalized = amp / totalMaxAmplitude; 
-      
-      // Cinematic Palette
-      if (normalized > 0) {
-        // Map to constructive Bright Cyan/Gold (#0ea5e9) = rgb(14, 165, 233)
-        // Baseline color is void: rgb(9, 14, 23) based on new variables
-        r = 9 + (normalized * (14 - 9));
-        g = 14 + (normalized * (165 - 14));
-        b = 23 + (normalized * (233 - 23));
-      } else {
-        // Map to destructive Deep Navy (#0d2746) = rgb(13, 39, 70)
-        let n = Math.abs(normalized);
-        r = 9 + (n * (13 - 9));
-        g = 14 + (n * (39 - 14));
-        b = 23 + (n * (70 - 23));
-      }
+  if (state.ui.displayMode === 'waves' || state.ui.displayMode === 'both') {
+    // Compute across 400x400 grid representing superposition
+    for (let y = 0; y < CANVAS_HEIGHT; y++) {
+      for (let x = 0; x < CANVAS_WIDTH; x++) {
+        
+        const amp = computeSuperposition(x, y, state.time);
+        
+        // Normalize amplitude between -1 to 1 regardless of amplitudes inputs for generic coloring mapping
+        let normalized = amp / totalMaxAmplitude; 
+        
+        // Cinematic Palette
+        if (normalized > 0) {
+          // Map to constructive Bright Cyan/Gold (#0ea5e9) = rgb(14, 165, 233)
+          // Baseline color is void: rgb(9, 14, 23) based on new variables
+          r = 9 + (normalized * (14 - 9));
+          g = 14 + (normalized * (165 - 14));
+          b = 23 + (normalized * (233 - 23));
+        } else {
+          // Map to destructive Deep Navy (#0d2746) = rgb(13, 39, 70)
+          let n = Math.abs(normalized);
+          r = 9 + (n * (13 - 9));
+          g = 14 + (n * (39 - 14));
+          b = 23 + (n * (70 - 23));
+        }
 
-      data[offset] = r;
-      data[offset + 1] = g;
-      data[offset + 2] = b;
-      data[offset + 3] = 255; // Alpha
-      
-      offset += 4;
+        data[offset] = r;
+        data[offset + 1] = g;
+        data[offset + 2] = b;
+        data[offset + 3] = 255; // Alpha
+        
+        offset += 4;
+      }
+    }
+  } else {
+    // Fill with empty void background
+    for (let y = 0; y < CANVAS_HEIGHT; y++) {
+      for (let x = 0; x < CANVAS_WIDTH; x++) {
+        data[offset] = 9;
+        data[offset + 1] = 14;
+        data[offset + 2] = 23;
+        data[offset + 3] = 255;
+        offset += 4;
+      }
     }
   }
 
   // Paint the final assembled bitmap object 
   ctx.putImageData(imageData, 0, 0);
+
+  // Overlap Particles
+  if (state.ui.displayMode === 'particles' || state.ui.displayMode === 'both') {
+    ctx.fillStyle = 'rgba(14, 165, 233, 0.8)';
+    for (let p of particles) {
+      p.update();
+      // Only show particle strongly if the probability wave is high
+      const amp = computeSuperposition(p.x, p.y, state.time);
+      const intensity = Math.abs(amp / totalMaxAmplitude);
+      
+      ctx.beginPath();
+      // Radius depends on intensity
+      ctx.arc(p.x, p.y, 1 + intensity * 2, 0, Math.PI * 2);
+      // Opacity based on intensity
+      ctx.fillStyle = `rgba(14, 165, 233, ${intensity})`;
+      ctx.fill();
+    }
+  }  
   
   // Advance deterministic app time (arbitrary speed constant dt = 0.05 per frame)
   state.time += 0.05; 

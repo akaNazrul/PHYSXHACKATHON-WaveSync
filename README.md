@@ -9,12 +9,17 @@
 
 ---
 
-## ✨ Core Features
+## 📡 Core Features & Presets Explained
 
 ### 🎨 **Real-Time Visualization**
 - **60 FPS Heatmap Rendering**: Compute interference patterns across 400×400 cells dynamically
 - **Color-Mapped Intensity**: Intuitive visualization of constructive (bright) and destructive (dark) interference zones
 - **Smooth Animation**: Canvas-based rendering optimized for performance
+
+### 🎛️ **WiFi Array Preset (Phase Array Beamforming)**
+The **Wi-Fi Array preset** simulates a real-world phased antenna array. This connects directly to how 5G and modern Wi-Fi routers dynamically steer signal beams without moving parts:
+- **How it works:** Two antennas (sources) are placed close together (separated by half a wavelength). By adjusting the signal emitting from one antenna to be exactly 90° out of phase with the other, they naturally form constructive interference in one specific direction and destructive interference in another!
+- **Real-world connection:** This technique "focuses" the internet connection directly towards your device rather than radiating it equally in all directions, saving energy and providing faster speeds. Use the draggable phone icon to probe the signal strength!
 
 ### 🎛️ **Interactive Controls**
 - **Wavelength Adjustment**: Tune frequency to see cascading pattern changes

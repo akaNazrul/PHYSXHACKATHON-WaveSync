@@ -482,12 +482,30 @@ input[type=range].source-b::-webkit-slider-thumb { background: var(--color-sourc
     flex-direction: column;
   }
   .canvas-container {
-    flex: 0 0 50vh;
+    flex: 0 0 60vh;
+    flex-direction: column;
+    justify-content: center;
   }
   .control-panel {
     width: 100%;
     flex: 1;
     border-left: none;
     border-top: 1px solid var(--color-border);
+  }
+  
+  .graph-panel, .intensity-readout {
+    position: relative;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    margin: 5px auto;
+    width: 90%;
+    transform: none;
+    z-index: 20;
+    order: 10; /* Move to bottom of canvas container, above control panel title */
+  }
+  
+  #interactive-bounds {
+    order: 1;
   }
 }

@@ -20,6 +20,11 @@ export function updateOverlays(activeId) {
     }
   });
 
+  const slitControls = document.getElementById('slit-controls');
+  if (slitControls) {
+    slitControls.style.display = activeId === 'youngs' ? 'block' : 'none';
+  }
+
   const phoneEl = document.getElementById('phone-indicator');
   if (phoneEl) {
     if (activeId === 'wifi') {
@@ -32,8 +37,10 @@ export function updateOverlays(activeId) {
 
 function applyYoungsSlit() {
   // Young's double slit: Two point sources close to each other, identical phase and frequency
-  state.sources[0] = { x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2 - 20, frequency: 4.0, amplitude: 1.0, phase: 0 };
-  state.sources[1] = { x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2 + 20, frequency: 4.0, amplitude: 1.0, phase: 0 };
+  // Use current slit separation
+  const sep = state.ui.slitSeparation;
+  state.sources[0] = { x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2 - sep/2, frequency: 4.0, amplitude: 1.0, phase: 0 };
+  state.sources[1] = { x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2 + sep/2, frequency: 4.0, amplitude: 1.0, phase: 0 };
   state.ui.activePreset = 'youngs';
   updateSlidersFromState();
   updateOverlays('youngs');
