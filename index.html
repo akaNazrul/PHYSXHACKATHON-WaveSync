@@ -12,8 +12,80 @@
     <!-- Interactive Canvas Viewer -->
     <main class="canvas-container" id="canvas-container">
       <canvas id="canvas-main" width="400" height="400"></canvas>
+      
+      <!-- Champion Presets Overlays Layer -->
+      <div id="overlay-layer" class="overlay-layer">
+        
+        <!-- Young's Double Slit Barrier -->
+        <div id="overlay-youngs" class="preset-overlay">
+          <div class="slit-barrier">
+            <div class="barrier-segment top"></div>
+            <div class="slit-gap"></div>
+            <div class="barrier-segment middle"></div>
+            <div class="slit-gap"></div>
+            <div class="barrier-segment bottom"></div>
+          </div>
+        </div>
+
+        <!-- Noise Cancellation Headset -->
+        <div id="overlay-noise" class="preset-overlay">
+          <svg class="headphone-svg" viewBox="0 0 200 100" fill="none" stroke="rgba(255, 255, 255, 0.4)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Simplified Top-down Headband and Earcups -->
+            <path d="M 40,50 C 40,10 160,10 160,50" />
+            <rect x="30" y="40" width="20" height="40" rx="10" fill="rgba(0,0,0,0.5)" />
+            <rect x="150" y="40" width="20" height="40" rx="10" fill="rgba(0,0,0,0.5)" />
+            <!-- Noise arrow -->
+            <path d="M 0,60 L 20,60" stroke="#f472b6" stroke-width="3" marker-end="url(#arrow)" />
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#f472b6" />
+              </marker>
+            </defs>
+          </svg>
+        </div>
+
+        <!-- Wi-Fi Floor Plan Blueprint -->
+        <div id="overlay-wifi" class="preset-overlay">
+          <!-- House floor plan graphic -->
+          <svg class="blueprint-svg" viewBox="0 0 400 400" fill="none" stroke="rgba(6, 182, 212, 0.3)" stroke-width="2">
+            <!-- Room walls -->
+            <path d="M 20,20 L 380,20 L 380,380 L 20,380 Z" />
+            <path d="M 150,20 L 150,150 L 20,150" />
+            <path d="M 250,380 L 250,200 L 380,200" />
+            <!-- Router placement icon (center) -->
+            <circle cx="200" cy="200" r="15" stroke-dasharray="2 4" />
+          </svg>
+        </div>
+      </div>
+
       <div id="source-a-indicator" class="source-indicator" title="Source A"></div>
       <div id="source-b-indicator" class="source-indicator" title="Source B"></div>
+      
+      <!-- Draggable Phone Receiver (B-01/D-03) Context -->
+      <div id="phone-indicator" class="phone-indicator" title="Drag to test signal">
+        <i data-lucide="smartphone"></i>
+        <div class="signal-bar">
+          <div id="phone-signal-fill" class="signal-fill"></div>
+        </div>
+      </div>
+      
+      <!-- Live Intensity Readout -->
+      <div class="intensity-readout">
+        <div class="readout-label">Live Intensity</div>
+        <div class="readout-bar">
+          <div class="readout-destructive" id="readout-destructive"></div>
+          <div class="readout-center"></div>
+          <div class="readout-constructive" id="readout-constructive"></div>
+        </div>
+      </div>
+      
+      <!-- 1D Cross-Section Graph (Tier D-02) -->
+      <div class="graph-panel" id="graph-panel">
+        <div class="graph-title">1D Cross-Section (Midline)</div>
+        <canvas id="graph-canvas" width="400" height="80"></canvas>
+        <!-- Interactive Probe Value -->
+        <div class="probe-value" id="probe-value">Amplitude: 0.00</div>
+      </div>
     </main>
 
     <!-- Side Control Panel -->

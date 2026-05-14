@@ -8,7 +8,8 @@ export const DEFAULT_STATE = {
   ],
   ui: {
     showEquations: true,
-    activePreset: null
+    activePreset: null,
+    phone: { x: 200, y: 50 }
   },
   time: 0
 };

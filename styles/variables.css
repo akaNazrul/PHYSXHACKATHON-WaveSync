@@ -1,15 +1,15 @@
 :root {
   --color-void: #0a0c10;
-  --color-canvas-bg: #111520;
-  --color-panel-bg: #1a2540;
-  --color-destructive: #0d3b6e;
-  --color-constructive: #f59e0b;
-  --color-source-a: #34d399;
-  --color-source-b: #f472b6;
+  --color-canvas-bg: #090e17;
+  --color-panel-bg: rgba(15, 23, 42, 0.6);
+  --color-panel-header: rgba(15, 23, 42, 0.4);
+  --color-destructive: #0d2746;
+  --color-constructive: #0ea5e9; /* Updated to cinematic bright cyan */
+  --color-source-a: #06b6d4; /* modern cyan */
+  --color-source-b: #8b5cf6; /* modern pink/purple */
   --color-ui-text: #94a3b8;
-  --color-ui-text-bright: #e2e8f0;
-  --color-border: rgba(255, 255, 255, 0.1);
-  --color-panel-header: rgba(0, 0, 0, 0.2);
+  --color-ui-text-bright: #f8fafc;
+  --color-border: rgba(255, 255, 255, 0.08);
 
   --font-mono: 'DM Mono', monospace;
   --font-display: 'Syne', sans-serif;

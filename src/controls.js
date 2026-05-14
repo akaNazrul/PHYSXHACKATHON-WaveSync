@@ -37,6 +37,9 @@ export function initControls() {
   setupDrag('source-a-indicator', 0);
   setupDrag('source-b-indicator', 1);
 
+  // Phone dragging setup (index -2 identifies phone)
+  setupDrag('phone-indicator', -2);
+
   // Position DOM nodes exactly relative to the canvas internal geometry matching
   syncDOMIndicators();
 
@@ -94,8 +97,13 @@ function setupDrag(id, index) {
     x = Math.max(0, Math.min(x, CANVAS_WIDTH));
     y = Math.max(0, Math.min(y, CANVAS_HEIGHT));
 
-    state.sources[activeSourceIndex].x = x;
-    state.sources[activeSourceIndex].y = y;
+    if (activeSourceIndex === -2) {
+      state.ui.phone.x = x;
+      state.ui.phone.y = y;
+    } else {
+      state.sources[activeSourceIndex].x = x;
+      state.sources[activeSourceIndex].y = y;
+    }
 
     syncDOMIndicators();
   }
@@ -130,6 +138,14 @@ export function syncDOMIndicators() {
     const pY = (state.sources[1].y / CANVAS_HEIGHT) * rect.height;
     srcB.style.left = `${pX}px`;
     srcB.style.top = `${pY}px`;
+  }
+  
+  const phoneDom = document.getElementById('phone-indicator');
+  if (phoneDom && state.ui.phone) {
+    const pX = (state.ui.phone.x / CANVAS_WIDTH) * rect.width;
+    const pY = (state.ui.phone.y / CANVAS_HEIGHT) * rect.height;
+    phoneDom.style.left = `${pX}px`;
+    phoneDom.style.top = `${pY}px`;
   }
 }
 
