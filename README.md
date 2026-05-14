@@ -3,7 +3,7 @@
 
 ## 📋 Overview
 
-**WaveSync** is a real-time wave interference simulator that brings the superposition principle of physics to life. Built for the National PhysXHackathon 2026, WaveSync visualizes complex wave interactions with stunning precision and interactivity. Watch as two coherent wave sources interfere, creating vivid interference patterns in real-time—perfect for physics education, exploration, and curiosity.
+**WaveSync** is a real-time wave interference simulator that brings the superposition principle of physics to life. Built for the National PhysXHackathon 2026, WaveSync visualizes complex wave interactions with stunning precision and interactivity. Watch as two coherent wave sources interfere, creating vivid interference patterns in real-time that perfect for physics education, exploration, and curiosity.
 
 **[🚀 Launch Live App](https://akanazrul.github.io/PHYSXHACKATHON-WaveSync/)**
 
