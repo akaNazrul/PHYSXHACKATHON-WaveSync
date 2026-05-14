@@ -1,5 +1,6 @@
 import { state } from './state.js';
 
+// velocity, v of wave
 const SPEED_OF_WAVE = 50; // Pixels per second relative velocity parameter in simulation
 
 /**
@@ -32,8 +33,11 @@ export function computeSuperposition(x, y, t) {
     const dy = y - source.y;
     const r = Math.sqrt(dx * dx + dy * dy);
     
-    // Attenuation over distance (optional but helps visualization realism) - disabled here for pure superposition
-    const psi = source.amplitude * Math.sin(k * r - (w * t) + phi);
+    // Attenuation over distance: makes it look like real water ripples
+    // The decay multiplier ensures the main rings stay bright but fade naturally as they expand,
+    // which prevents the harsh checkerboard interference pattern everywhere on screen.
+    const distanceFade = 50 / (r + 50); 
+    const psi = source.amplitude * distanceFade * Math.sin(k * r - (w * t) + phi);
     totalAmplitude += psi;
   }
   
