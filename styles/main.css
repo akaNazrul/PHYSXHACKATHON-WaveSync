@@ -20,11 +20,96 @@ body {
 }
 
 /* Layout */
+.problem-banner {
+  background: rgba(6, 182, 212, 0.15);
+  border-bottom: 1px solid rgba(6, 182, 212, 0.3);
+  padding: 8px 20px;
+  text-align: center;
+  font-family: var(--font-syne), sans-serif;
+  font-size: 14px;
+  color: #fff;
+  z-index: 100;
+}
+.problem-banner strong {
+  color: var(--color-source-a);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(9, 14, 23, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 0.3s ease, visibility 0.3s;
+}
+.modal-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.modal-content {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 2.5rem;
+  border-radius: 12px;
+  max-width: 500px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+.modal-title {
+  font-family: var(--font-syne), sans-serif;
+  color: #fff;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+.modal-body {
+  color: var(--color-ui-text);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+.modal-features {
+  list-style: none;
+  margin-bottom: 1.5rem;
+}
+.modal-features li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  color: #ddd;
+}
+.modal-features li i {
+  color: var(--color-source-a);
+  width: 18px;
+  height: 18px;
+}
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: var(--color-source-a);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-syne), sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-primary:hover {
+  background: #2dd4bf;
+}
+
 .app-container {
   display: flex;
-  height: 100vh;
+  flex: 1;
   width: 100vw;
   background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 70%);
+  overflow: hidden;
 }
 
 /* Canvas Area */
@@ -33,9 +118,12 @@ body {
   background-color: transparent;
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
+  padding-top: 180px;
+  padding-bottom: 100px;
 }
 
 #canvas-main {
@@ -183,17 +271,18 @@ body {
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(6, 182, 212, 0.3);
   border-radius: 8px;
-  padding: 8px 16px;
+  padding: 10px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  z-index: 15;
-  min-width: 200px;
+  z-index: 25;
+  min-width: 220px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .readout-label {
@@ -243,11 +332,33 @@ body {
   transition: width 0.1s ease;
 }
 
-/* 1D Cross-Section Graph Overlay */
-.graph-panel {
+/* Add HUD Top Bar */
+.hud-top-bar {
   position: absolute;
   top: 20px;
+  left: 20px;
   right: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 15px;
+  pointer-events: none; /* Let canvas drag events pass through... */
+  z-index: 20;
+  max-width: calc(100% - 40px);
+}
+
+/* ...but make the inner panels clickable/interactable */
+.hud-top-bar > * {
+  pointer-events: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* 1D Cross-Section Graph Overlay */
+.graph-panel {
+  position: relative; 
+  flex: 1;
+  min-width: 220px;
+  max-width: 300px;
   background: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -257,7 +368,6 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  z-index: 15;
 }
 
 .graph-title {
@@ -270,7 +380,7 @@ body {
 }
 
 #graph-canvas {
-  width: 250px;
+  width: 100%;
   height: 50px;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -285,6 +395,39 @@ body {
   width: 100%;
   text-align: right;
   height: 14px;
+}
+
+/* Analytical Validation Panel */
+.analytics-panel {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+  max-width: 280px; 
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+  font-family: var(--font-mono);
+}
+.analytics-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--color-source-b);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+.analytics-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+.stat-val {
+  color: #fff;
+  font-weight: 500;
 }
 
 /* Control Panel */
@@ -478,34 +621,170 @@ input[type=range].source-b::-webkit-slider-thumb { background: var(--color-sourc
 
 /* Mobile fallback */
 @media (max-width: 768px) {
+  body {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
   .app-container {
     flex-direction: column;
-  }
-  .canvas-container {
-    flex: 0 0 60vh;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .control-panel {
-    width: 100%;
-    flex: 1;
-    border-left: none;
-    border-top: 1px solid var(--color-border);
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
   }
   
-  .graph-panel, .intensity-readout {
+  .canvas-container {
+    flex: 0 0 auto;
+    min-height: 50vh;
+    height: auto;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    justify-content: flex-start;
+    padding-left: 10px;
+    padding-right: 10px;
+    overflow: visible;
+  }
+  
+  .control-panel {
+    width: 100%;
+    flex: none;
+    border-left: none;
+    border-top: 1px solid var(--color-border);
+    max-height: none;
+    overflow: visible;
+  }
+  
+  .hud-top-bar {
     position: relative;
     top: auto;
+    left: auto;
     right: auto;
-    bottom: auto;
-    margin: 5px auto;
-    width: 90%;
-    transform: none;
+    width: 100%;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0;
     z-index: 20;
-    order: 10; /* Move to bottom of canvas container, above control panel title */
+    max-width: 100%;
+    margin: 10px 0 0;
+  }
+  
+  .graph-panel, .analytics-panel {
+    width: 100%;
+    max-width: none;
+    min-width: unset;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(6, 182, 212, 0.4);
+  }
+  
+  #graph-canvas {
+    width: 100%;
+    height: 56px;
+  }
+
+  .intensity-readout {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    width: 100%;
+    transform: none;
+    margin: 10px 0 0;
+    z-index: 25;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(6, 182, 212, 0.4);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  }
+  
+  .readout-bar {
+    width: 100%;
+    min-width: 0;
   }
   
   #interactive-bounds {
-    order: 1;
+    width: 100%;
+    flex: none;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    min-height: 280px;
+  }
+}
+
+/* Ultra-mobile (small phones) */
+@media (max-width: 480px) {
+  .canvas-container {
+    min-height: 42vh;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  
+  .hud-top-bar {
+    gap: 8px;
+  }
+  
+  .graph-panel, .analytics-panel {
+    padding: 10px;
+    border-radius: 6px;
+  }
+  
+  .graph-title, .analytics-title {
+    font-size: 9px;
+  }
+  
+  #graph-canvas {
+    height: 44px;
+  }
+  
+  .intensity-readout {
+    padding: 8px 12px;
+    min-width: unset;
+    width: 100%;
+  }
+  
+  .readout-label {
+    font-size: 9px;
+  }
+}
+
+/* Tablet/Medium screens */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .canvas-container {
+    padding-top: 160px;
+    padding-bottom: 90px;
+  }
+  
+  .hud-top-bar {
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    gap: 12px;
+  }
+  
+  .graph-panel, .analytics-panel {
+    min-width: 180px;
+    max-width: 270px;
+  }
+}
+
+/* Large desktop */
+@media (min-width: 1920px) {
+  .canvas-container {
+    padding-top: 200px;
+    padding-bottom: 120px;
+  }
+  
+  .hud-top-bar {
+    top: 25px;
+    left: 30px;
+    right: 30px;
+    gap: 20px;
+  }
+  
+  .graph-panel, .analytics-panel {
+    min-width: 280px;
+    max-width: 350px;
   }
 }

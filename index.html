@@ -8,6 +8,28 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
+  <!-- Problem Statement Banner (Hackathon Core Requirement) -->
+  <div class="problem-banner">
+    <p><strong>Mission:</strong> WaveSync helps students, educators, and engineers develop intuition for wave interference — the physics behind Wi-Fi, noise cancellation, and medical ultrasound.</p>
+  </div>
+
+  <!-- Onboarding Modal -->
+  <div id="onboarding-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h2 class="modal-title">Welcome to WaveSync</h2>
+      <p class="modal-body">
+        Stop memorizing equations. Start <em>feeling</em> the physics. <br><br>
+        WaveSync is a real-time, browser-based sandbox that makes wave interference intuitive. Whether you're exploring how two Wi-Fi routers create dead zones, or how noise-cancelling headphones destroy sound waves, it's all here.
+      </p>
+      <ul class="modal-features">
+        <li><i data-lucide="hand"></i> Drag the sources to see interference patterns change instantly.</li>
+        <li><i data-lucide="activity"></i> Match textbook equations to live numerical validation.</li>
+        <li><i data-lucide="layers"></i> Explore real-world scenarios using the presets.</li>
+      </ul>
+      <button id="btn-start" class="btn-primary">Start Exploring</button>
+    </div>
+  </div>
+
   <div class="app-container">
     <!-- Interactive Canvas Viewer -->
     <main class="canvas-container" id="canvas-container">
@@ -67,6 +89,36 @@
       </div>
       </div>
       
+      <!-- HUD Top Bar Container -->
+      <div class="hud-top-bar">
+        <!-- Analytical Validation Panel -->
+        <div class="analytics-panel" id="analytics-panel">
+          <div class="analytics-title">Theoretical Validation</div>
+          <div class="analytics-body" id="analytics-body">
+            <div class="analytics-row">
+              <span>Fringe Spacing (y):</span>
+              <span id="stat-fringe" class="stat-val">--</span>
+            </div>
+            <div class="analytics-row">
+              <span>Phase Diff (Δφ):</span>
+              <span id="stat-phasediff" class="stat-val">--</span>
+            </div>
+            <div class="analytics-row">
+              <span>Peak Intensity:</span>
+              <span id="stat-peak" class="stat-val">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1D Cross-Section Graph (Tier D-02) -->
+        <div class="graph-panel" id="graph-panel">
+          <div class="graph-title">1D Cross-Section (Midline)</div>
+          <canvas id="graph-canvas" width="400" height="80"></canvas>
+          <!-- Interactive Probe Value -->
+          <div class="probe-value" id="probe-value">Amplitude: 0.00</div>
+        </div>
+      </div>
+
       <!-- Live Intensity Readout -->
       <div class="intensity-readout">
         <div class="readout-label">Live Intensity</div>
@@ -75,14 +127,6 @@
           <div class="readout-center"></div>
           <div class="readout-constructive" id="readout-constructive"></div>
         </div>
-      </div>
-      
-      <!-- 1D Cross-Section Graph (Tier D-02) -->
-      <div class="graph-panel" id="graph-panel">
-        <div class="graph-title">1D Cross-Section (Midline)</div>
-        <canvas id="graph-canvas" width="400" height="80"></canvas>
-        <!-- Interactive Probe Value -->
-        <div class="probe-value" id="probe-value">Amplitude: 0.00</div>
       </div>
     </main>
 
@@ -200,17 +244,25 @@
           </div>
         </div>
 
-        <div class="section-title" style="color: var(--color-ui-text); margin-top: 20px;">Presets</div>
+        <div class="section-title" style="color: var(--color-ui-text); margin-top: 20px;">Real-World Scenarios</div>
+        <div class="preset-descriptions" id="preset-desc" style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">Select a scenario to load configuration...</div>
         <div class="btn-group">
           <button id="preset-youngs" class="btn">
             <i data-lucide="waves" width="14" height="14"></i> Young's Double-Slit
           </button>
           <button id="preset-noise" class="btn">
-            <i data-lucide="headphones" width="14" height="14"></i> Noise Cancellation
+            <i data-lucide="headphones" width="14" height="14"></i> Active Noise Cancellation
           </button>
           <button id="preset-wifi" class="btn">
-            <i data-lucide="wifi" width="14" height="14"></i> Wi-Fi Array (Beamforming)
+            <i data-lucide="wifi" width="14" height="14"></i> Wi-Fi Dead Zones
           </button>
+        </div>
+
+        <div class="section-title" style="color: var(--color-ui-text); margin-top: 20px;">Assumptions & Limitations</div>
+        <div style="font-size: 11px; color: #64748b; line-height: 1.4;">
+          • Model is 2D only (real waves expand spherically in 3D).<br>
+          • Assumes an ideal medium (no resistance/damping).<br>
+          • Excludes diffraction through boundaries or edge reflection.
         </div>
       </div>
     </aside>

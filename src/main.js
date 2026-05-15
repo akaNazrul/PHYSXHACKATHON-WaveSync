@@ -29,6 +29,15 @@ function boot() {
     updateOverlays(null);
   });
 
+  // Onboarding Modal listener
+  const btnStart = document.getElementById('btn-start');
+  const modal = document.getElementById('onboarding-modal');
+  if (btnStart && modal) {
+    btnStart.addEventListener('click', () => {
+      modal.classList.add('hidden');
+    });
+  }
+
   // Interactive Probe (Tier D-02)
   const canvasMain = document.getElementById('canvas-main');
   const probeValueDOM = document.getElementById('probe-value');

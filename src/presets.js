@@ -33,6 +33,20 @@ export function updateOverlays(activeId) {
       phoneEl.classList.remove('visible');
     }
   }
+
+  // Update real-world scenario description
+  const descEl = document.getElementById('preset-desc');
+  if (descEl) {
+    if (activeId === 'youngs') {
+      descEl.innerHTML = "<strong>Young's Double-Slit:</strong> A single wave passing through two slits creates two new coherent sources. Observe how moving them changes the fringe spacing (y = λL/d).";
+    } else if (activeId === 'noise') {
+      descEl.innerHTML = "<strong>Active Noise Cancellation:</strong> A headphone speaker emits a wave exactly 180° out of phase with external noise, creating continuous destructive interference (silence) at the ear.";
+    } else if (activeId === 'wifi') {
+      descEl.innerHTML = "<strong>Wi-Fi Dead Zones:</strong> Two routers at the same frequency can create completely dead zones in a room. Drag the phone receiver to measure the signal drop in destructive zones.";
+    } else {
+      descEl.innerHTML = "Select a scenario to load configuration...";
+    }
+  }
 }
 
 function applyYoungsSlit() {

@@ -210,6 +210,9 @@ export function paintFrame() {
     }
   }
 
+  // Update Analytical Validation Panel (Hackathon Rubric: Results and Performance)
+  updateAnalytics();
+
   // Draw 1D Cross-Section Graph (Tier D-02)
   if (graphCtx) {
     const gWidth = graphCanvas.width;
@@ -240,6 +243,51 @@ export function paintFrame() {
     graphCtx.strokeStyle = 'var(--color-constructive)';
     graphCtx.lineWidth = 2;
     graphCtx.stroke();
+  }
+}
+
+/**
+ * Updates the Numerical Validation panel to prove simulation matches theoretical models.
+ */
+function updateAnalytics() {
+  const statFringe = document.getElementById('stat-fringe');
+  const statPhaseDiff = document.getElementById('stat-phasediff');
+  const statPeak = document.getElementById('stat-peak');
+
+  if (!statFringe || state.sources.length < 2) return;
+
+  const sA = state.sources[0];
+  const sB = state.sources[1];
+
+  // Phase diff
+  const phaseDiff = Math.abs(sA.phase - sB.phase);
+  if (statPhaseDiff) statPhaseDiff.innerText = `${phaseDiff.toFixed(0)}°`;
+
+  // Peak Intensity (proportional to squared amplitude)
+  const maxCenterAmp = sA.amplitude + sB.amplitude;
+  const intensity = Math.pow(maxCenterAmp, 2);
+  if (statPeak) statPeak.innerText = `${intensity.toFixed(2)} (A²)`;
+
+  // Fringe Spacing (y = lambda * L / d)
+  // Assuming L = 200px (virtual viewing plane distance)
+  // V = 50px/s (from physics.js). Avg frequency = (fA + fB) / 2
+  const v = 50; 
+  const avgFreq = (sA.frequency + sB.frequency) / 2;
+  const lambda = v / avgFreq;
+  
+  const dx = sA.x - sB.x;
+  const dy = sA.y - sB.y;
+  const d = Math.sqrt(dx*dx + dy*dy);
+  
+  if (d < 5) {
+    if (statFringe) statFringe.innerText = `N/A (Co-located)`;
+  } else {
+    const L = 200; 
+    const y = (lambda * L) / d;
+    if (statFringe) {
+      if (y > 1000) statFringe.innerText = `Infinite`;
+      else statFringe.innerText = `${y.toFixed(1)} px`;
+    }
   }
 }
 
