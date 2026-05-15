@@ -121,32 +121,6 @@ export function paintFrame() {
     }
   }
 
-  // Update Phone Receiver Signal (B-01/D-03)
-  if (state.ui.activePreset === 'wifi' && state.ui.phone) {
-    const phoneSignal = document.getElementById('phone-signal-fill');
-    if (phoneSignal) {
-      const pAmp = computeSuperposition(state.ui.phone.x, state.ui.phone.y, state.time);
-
-      // Normalize against 0 to 2
-      let pStrength = Math.abs(pAmp) / Math.max(0.1, totalMaxAmplitude);
-      pStrength = Math.min(pStrength * 100, 100);
-
-      phoneSignal.style.width = pStrength + '%';
-
-      // Color change on high signal
-      if (pStrength > 70) {
-        phoneSignal.style.backgroundColor = 'var(--color-source-a)';
-      } else if (pStrength > 30) {
-        phoneSignal.style.backgroundColor = '#f59e0b';
-      } else {
-        phoneSignal.style.backgroundColor = 'var(--color-destructive)';
-      }
-    }
-  }
-
-  // Update Analytical Validation Panel
-  updateAnalytics();
-
   // Draw 1D Cross-Section Graph (Tier D-02)
   if (graphCtx) {
     const gWidth = graphCanvas.width;
@@ -179,52 +153,3 @@ export function paintFrame() {
     graphCtx.stroke();
   }
 }
-
-/**
- * Updates the Numerical Validation panel to prove simulation matches theoretical models.
- */
-function updateAnalytics() {
-  const statFringe = document.getElementById('stat-fringe');
-  const statPhaseDiff = document.getElementById('stat-phasediff');
-  const statPeak = document.getElementById('stat-peak');
-
-  if (!statFringe || state.sources.length < 2) return;
-
-  const sA = state.sources[0];
-  const sB = state.sources[1];
-
-  // Phase diff as the shortest angular distance on the circle.
-  const rawPhaseDiff = Math.abs(sA.phase - sB.phase) % 360;
-  const phaseDiff = rawPhaseDiff > 180 ? 360 - rawPhaseDiff : rawPhaseDiff;
-  if (statPhaseDiff) statPhaseDiff.innerText = `${phaseDiff.toFixed(0)}°`;
-
-  // Peak intensity is reported as the fully constructive upper bound.
-  const maxCenterAmp = sA.amplitude + sB.amplitude;
-  const intensity = Math.pow(maxCenterAmp, 2);
-  if (statPeak) statPeak.innerText = `${intensity.toFixed(2)} (A²)`;
-
-  // Fringe spacing uses the Young's double-slit far-field approximation.
-  // Outside that geometry, the value is not physically meaningful.
-  if (state.ui.activePreset !== 'youngs') {
-    statFringe.innerText = `N/A (Young's preset only)`;
-    return;
-  }
-
-  const v = 50;
-  const avgFreq = (sA.frequency + sB.frequency) / 2;
-  const lambda = v / avgFreq;
-
-  const dx = sA.x - sB.x;
-  const dy = sA.y - sB.y;
-  const d = Math.sqrt(dx * dx + dy * dy);
-
-  if (d < 5) {
-    statFringe.innerText = `N/A (Co-located)`;
-  } else {
-    const L = 200;
-    const y = (lambda * L) / d;
-    if (y > 1000) statFringe.innerText = `Infinite`;
-    else statFringe.innerText = `${y.toFixed(1)} px`;
-  }
-}
-

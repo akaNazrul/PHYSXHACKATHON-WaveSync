@@ -9,7 +9,6 @@ export const DEFAULT_STATE = {
   ui: {
     showEquations: true,
     activePreset: null,
-    phone: { x: 200, y: 50 },
     displayMode: 'waves',
   // displayMode UI removed; always render waves-only
 

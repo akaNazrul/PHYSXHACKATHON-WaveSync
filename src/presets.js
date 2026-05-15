@@ -5,11 +5,10 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT } from './renderer.js';
 export function attachPresets() {
   document.getElementById('preset-youngs')?.addEventListener('click', applyYoungsSlit);
   document.getElementById('preset-noise')?.addEventListener('click', applyNoiseCancellation);
-  document.getElementById('preset-wifi')?.addEventListener('click', applyWiFiBeamforming);
 }
 
 export function updateOverlays(activeId) {
-  ['youngs', 'noise', 'wifi'].forEach(id => {
+  ['youngs', 'noise'].forEach(id => {
     const el = document.getElementById(`overlay-${id}`);
     if (el) {
       if (id === activeId) {
@@ -25,24 +24,13 @@ export function updateOverlays(activeId) {
     slitControls.style.display = activeId === 'youngs' ? 'block' : 'none';
   }
 
-  const phoneEl = document.getElementById('phone-indicator');
-  if (phoneEl) {
-    if (activeId === 'wifi') {
-      phoneEl.classList.add('visible');
-    } else {
-      phoneEl.classList.remove('visible');
-    }
-  }
-
   // Update real-world scenario description
   const descEl = document.getElementById('preset-desc');
   if (descEl) {
     if (activeId === 'youngs') {
-      descEl.innerHTML = "<strong>Young's Double-Slit:</strong> A single wave passing through two slits creates two new coherent sources. Observe how moving them changes the fringe spacing (y = λL/d).";
+      descEl.innerHTML = "<strong>Young's Double-Slit:</strong> A single wave passing through two finite slits creates coherent sources. Slit separation controls fringe spacing (y = λL/d), while slit width controls diffraction spread (narrower slit = wider spread).";
     } else if (activeId === 'noise') {
       descEl.innerHTML = "<strong>Active Noise Cancellation:</strong> A headphone speaker emits a wave exactly 180° out of phase with external noise, creating continuous destructive interference (silence) at the ear.";
-    } else if (activeId === 'wifi') {
-      descEl.innerHTML = "<strong>Wi-Fi Dead Zones:</strong> Two routers at the same frequency can create completely dead zones in a room. Drag the phone receiver to measure the signal drop in destructive zones.";
     } else {
       descEl.innerHTML = "Select a scenario to load configuration...";
     }
@@ -67,14 +55,4 @@ function applyNoiseCancellation() {
   state.ui.activePreset = 'noise';
   updateSlidersFromState();
   updateOverlays('noise');
-}
-
-function applyWiFiBeamforming() {
-  // Wi-Fi phased array: Two antennas spaced one wavelength apart in the demo layout.
-  state.sources[0] = { x: CANVAS_WIDTH / 2 - 12.5, y: CANVAS_HEIGHT / 2, frequency: 2.0, amplitude: 1.0, phase: 0 };
-  state.sources[1] = { x: CANVAS_WIDTH / 2 + 12.5, y: CANVAS_HEIGHT / 2, frequency: 2.0, amplitude: 1.0, phase: 90 };
-  state.ui.phone = { x: 300, y: 100 }; // Ensure phone is positioned nicely
-  state.ui.activePreset = 'wifi';
-  updateSlidersFromState();
-  updateOverlays('wifi');
 }

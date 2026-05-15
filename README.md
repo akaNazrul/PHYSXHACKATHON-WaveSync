@@ -22,207 +22,122 @@
 To run natively in the browser without massive overhead:
 - **2D Slice:** The model computes in a flat 2D topological plane (real waves expand spherically in 3D).
 - **Ideal Medium:** Assumes an ideal medium devoid of resistance or boundary absorption.
-- **No Diffraction:** Refraction and edge-diffraction mechanics are simplified for clarity.
+- **Simplified Diffraction:** Young's preset includes a finite-slit diffraction approximation; reflections and full boundary diffraction are simplified.
+
+---
+***
+Updated README describing the current physics implementation, renderer behavior, and available presets. Includes links to code references and developer notes.
+***
+
+# 🌊 WaveSync — Wave Interference Explorer
+
+**WaveSync** is a compact, zero-dependency browser app that simulates real-time 2D wave interference. It is designed for teaching and experimentation: change wavelengths, amplitudes, phases, and slit geometry, then observe the resulting interference heatmap.
+
+## What’s new in this repo
+- Documentation updated to reflect the current implementation in `src/physics.js`, `src/renderer.js`, and `src/presets.js`.
+- The renderer uses a fixed simulation grid (400×400) and an amplitude-normalized color mapping for visual clarity.
+
+## Quick Links
+- Live demo: https://akanazrul.github.io/PHYSXHACKATHON-WaveSync/
+- Source: the core logic is in [src/physics.js](src/physics.js#L15-L18) and the renderer in [src/renderer.js](src/renderer.js#L1-L4).
 
 ---
 
-## 📡 Core Features & Presets Explained
+## Physics & Equations
 
-### 🎨 **Real-Time Visualization**
-- **60 FPS Heatmap Rendering**: Compute interference patterns across 400×400 cells dynamically
-- **Color-Mapped Intensity**: Intuitive visualization of constructive (bright) and destructive (dark) interference zones
-- **Smooth Animation**: Canvas-based rendering optimized for performance
+WaveSync implements the superposition of scalar waves. The code computes the instantaneous scalar field at each point using the familiar form:
 
-### 🎛️ **WiFi Array Preset (Phase Array Beamforming)**
-The **Wi-Fi Array preset** simulates a real-world phased antenna array. This connects directly to how 5G and modern Wi-Fi routers dynamically steer signal beams without moving parts:
-- **How it works:** Two antennas (sources) are placed close together and the demo uses a fixed phase offset to shape the interference field. The current layout spaces the antennas by one wavelength in the simulated grid.
-- **Real-world connection:** This technique "focuses" the internet connection directly towards your device rather than radiating it equally in all directions, saving energy and providing faster speeds. Use the draggable phone icon to probe the signal strength!
+$$
+\\Psi(\\mathbf{r},t) = \\sum_{i} A_i \\sin\\big(k r_i - \\omega t + \\phi_i\\big)
+$$
 
-### 🎛️ **Interactive Controls**
-- **Wavelength Adjustment**: Tune frequency to see cascading pattern changes
-- **Amplitude Control**: Adjust wave intensity for both sources independently
-- **Phase Offset**: Shift the phase relationship to explore interference variations
-- **Drag-to-Position**: Click and drag wave sources directly on the canvas
-- **Touch Support**: Full mobile gesture support for all interactions
+Definitions used in code:
+- Wavelength: $\\lambda = v / f$ (where `SPEED_OF_WAVE` is the model speed and `f` is `source.frequency`). See [src/physics.js](src/physics.js#L33-L36).
+- Wave number: $k = 2\\pi / \\lambda$.
+- Angular frequency: $\\omega = 2\\pi f$.
+- Phase: code converts degrees to radians via `phi = (phase * Math.PI) / 180`.
 
-### 📚 **Pre-Configured Scenarios**
-- **Acoustic Noise Cancellation**: Destructive interference demonstrating phase cancellation
-- **Wi-Fi Array Beamforming**: Constructive interference with spatial alignment
-- **Young's Double-Slit Experiment**: Classic physics demo with interference fringes
+Diffraction (Young's finite slit approximation): a sinc envelope is applied to model single-slit diffraction when the active preset uses a slit. The helper `sinc()` and the envelope construction live in [src/physics.js](src/physics.js#L8-L11) and the slit-envelope code is in [src/physics.js](src/physics.js#L45-L51).
 
-### 📤 **Export & Share**
-- **One-Click PNG Export**: Snapshot your interference patterns instantly
-- **Shareable Results**: Perfect for reports, presentations, or social media
+Attenuation: Wave contributions include an empirical distance fade `distanceFade = 50 / (r + 50)` so that distant contributions visually diminish. The per-source contribution is computed as:
 
-### 📐 **Educational Overlay**
-- **Live Physics Equations**: See the math equations used to compute each frame
-- **Direct Variable Mapping**: Watch how wavelength, amplitude, and phase directly affect the visual output
+$$
+\\psi_i = A_i \\cdot D(r_i) \\cdot E_{\\text{diffraction}}(\\theta_i) \\cdot \\sin(k r_i - \\omega t + \\phi_i)
+$$
+
+where the code assembles the total field as `sum(psi_i)`. See implementation in [src/physics.js](src/physics.js#L52-L59).
+
+Note on intensity vs amplitude: the renderer normalizes the summed amplitude for color mapping (see [src/renderer.js](src/renderer.js#L64-L67)). Physically, intensity is proportional to $|\\Psi|^2$; this app uses normalized amplitude for visual contrast and education. If you prefer a strict intensity visualization, switch the mapping to use squared amplitude in the renderer (developer note below).
 
 ---
 
-## 🛠️ Tech Stack
+## Presets (what’s available)
 
-| Category | Technology |
-|----------|-----------|
-| **Language** | ES2022 JavaScript |
-| **Rendering** | HTML5 Canvas |
-| **Styling** | CSS3 with CSS Variables |
-| **Architecture** | Vanilla JS Modules (Zero Dependencies) |
-| **Deployment** | GitHub Pages with GitHub Actions |
-| **Physics** | Radial superposition with visual attenuation |
+- **Young’s Double-Slit** — two coherent sources arranged as a slit pair with a diffraction envelope. (See `applyYoungsSlit` in [src/presets.js](src/presets.js#L40-L46)).
+  - Typical parameters in code: `frequency: 4.0`, `amplitude: 1.0`, `phase: 0`, `slitWidth`, and `slitSeparation` from `state` (see [src/state.js](src/state.js#L1-L18)).
 
-**Why Vanilla JS?** Zero bloat, instant load times, and pure physics computation without the overhead of frameworks.
+- **Noise Cancellation (Destructive Interference)** — two equal-amplitude sources with 180° phase difference to produce cancellation (see `applyNoiseCancellation` in [src/presets.js](src/presets.js#L51-L54)).
+
+Note: The README and design notes historically referenced a "Wi‑Fi Array / phased-array" demo; that idea is described in [idea-refine.md](idea-refine.md#L960-L967) and [TODO.md](TODO.md#L1-L4) but is not currently wired as an active preset in [src/presets.js](src/presets.js#L1-L8).
 
 ---
 
-## 📁 Project Structure
+## Rendering & Performance
 
-```
-PHYSXHACKATHON-WaveSync/
-├── index.html                    # Main entry point (HTML structure)
-├── README.md                     # This file
-├── wavesync-prd.html            # Product requirements document
-│
-├── src/                          # Core JavaScript modules
-│   ├── main.js                  # Application bootstrap & event loop
-│   ├── physics.js               # Wave equations & interference math
-│   ├── renderer.js              # Canvas rendering engine
-│   ├── controls.js              # UI interaction handlers
-│   ├── state.js                 # Application state management
-│   ├── presets.js               # Pre-configured scenarios
-│   └── exporter.js              # PNG export functionality
-│
-├── styles/                       # CSS styling
-│   ├── main.css                 # Core layout & components
-│   └── variables.css            # Theme & design tokens
-│
-└── .github/
-    └── workflows/
-        └── deploy.yml            # GitHub Pages auto-deployment
-```
+- Canvas internal resolution: 400 × 400 pixels (see [src/renderer.js](src/renderer.js#L1-L4)).
+- Rendering loop: `requestAnimationFrame` drives the paint loop; simulation time is advanced by a small step per frame (`state.time += 0.05`) for deterministic visual motion (see time-stepping in [src/renderer.js](src/renderer.js#L56-L58) and `main.js` loop at [src/main.js](src/main.js#L63-L69]).
+- Image buffer: the renderer uses a single `ImageData` buffer and reuses it every frame to reduce GC pressure ([src/renderer.js](src/renderer.js#L41-L45)).
+- Color mapping: amplitude is normalized by total source amplitude for stable color ranges ([src/renderer.js](src/renderer.js#L64-L67)).
 
-**Key Modules:**
-
-| File | Purpose |
-|------|---------|
-| `main.js` | Initialize app, manage `requestAnimationFrame` loop, coordinate modules |
-| `physics.js` | Core wave equation math: $\Psi(r,t) = \sum_i A_i \sin(kr_i - \omega t + \phi_i)$ |
-| `renderer.js` | Compute heatmap, draw canvas, handle color mapping |
-| `controls.js` | Handle slider inputs, mouse/touch events, UI responses |
-| `state.js` | Centralized state store for wavelength, amplitude, phase, positions |
-| `presets.js` | Pre-defined scenario configurations |
-| `exporter.js` | Canvas-to-PNG download functionality |
+Performance tips:
+- Increase `CANVAS_WIDTH`/`CANVAS_HEIGHT` in [src/renderer.js](src/renderer.js#L1-L4) to raise resolution (performance cost scales with N²).
+- To run at lower CPU, reduce the canvas resolution or throttle `state.time` increments.
 
 ---
 
-## 🚀 Local Setup & Development
+## Developer Notes & Extending
 
-### Prerequisites
-- **Modern Web Browser** (Chrome, Firefox, Safari, Edge)
-- **Text Editor** (VS Code recommended)
-- **Optional**: Node.js for local server (not required)
+- Core physics implementation: `computeSuperposition(x, y, t)` in [src/physics.js](src/physics.js#L15-L18).
+- To add a preset: follow the `applyYoungsSlit` pattern in [src/presets.js](src/presets.js#L40-L46) and register it via `attachPresets()`.
+- To switch to physical intensity mapping, replace the renderer's normalization step with a squared-amplitude mapping (use `I = \\Psi^2`) in [src/renderer.js](src/renderer.js#L64-L67).
+- Export snapshots using the UI export button (implementation in [src/exporter.js](src/exporter.js#L1-L14)).
 
-### Option 1: Direct Execution (Fastest)
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/akanazrul/PHYSXHACKATHON-WaveSync.git
-   cd PHYSXHACKATHON-WaveSync
-   ```
+---
 
-2. **Open in Browser**
-   - Double-click `index.html` directly, OR
-   - Drag `index.html` into your browser window
+## Run locally
 
-3. **Start experimenting!**
-   - Adjust controls to see wave interference
-   - Load presets for demonstrations
-   - Export snapshots
-
-### Option 2: Local Server (Recommended for Development)
-For better development experience with live reload:
+Open `index.html` directly in a browser, or run a simple local server:
 
 ```bash
-# Using Node.js (if installed)
+# Node: (if you have Node.js)
 npx serve .
-# Then open http://localhost:3000
-```
 
-Or use any Python-based server:
-```bash
-# Python 3
+# Python 3:
 python -m http.server 8000
-# Open http://localhost:8000
+
+# Then open http://localhost:8000
 ```
 
-### Option 3: VS Code Live Server
-- Install "Live Server" extension in VS Code
-- Right-click `index.html` → "Open with Live Server"
-- Browser auto-refreshes on file changes
+---
+
+## Limitations & Assumptions
+
+- 2D slice model — does not model full 3D spherical wave propagation.
+- Attenuation is an empirical visual fade (not a rigorous energy-loss model).
+- Diffraction uses a sinc-like envelope based on pixel slit width — this is an approximation for educational visuals.
 
 ---
 
-## 🎓 How It Works
+## Contributing
 
-### Physics Engine
-WaveSync computes real-time interference using the **superposition principle**:
+If you'd like the phased-array Wi‑Fi demo reintroduced, or an explicit physical intensity mode added, I can implement those changes and update the UI. Tell me which you'd prefer and I will:
 
-For two coherent wave sources with equal frequency:
-
-$$\Psi(x,y,t) = A_1 \sin(kr_1 - \omega t + \phi_1) + A_2 \sin(kr_2 - \omega t + \phi_2)$$
-
-Where:
-- $r_i$ = Distance from the field point to source $i$
-- $A$ = Amplitude (wave height)
-- $k$ = Wave number (related to wavelength)
-- $\omega$ = Angular frequency
-- $\phi$ = Phase offset
-- Interference intensity at a point scales as $I \propto |\Psi|^2$; the fully constructive two-source peak is $(A_1 + A_2)^2$
-
-### Rendering Pipeline
-1. **Input**: Wavelength, amplitudes, phase, source positions
-2. **Compute**: Wave values at each (x, y) cell
-3. **Map**: Intensity values → color gradient (dark = destructive, bright = constructive)
-4. **Render**: Draw heatmap to canvas at 60 FPS
-5. **Display**: Update physics equations on overlay
+1. Add a `phasedArray` preset (practical implementation).
+2. Add an `intensityMode` toggle (maps colors to $|\\Psi|^2$).
 
 ---
 
-## 📱 Browser Compatibility
+Enjoy exploring wave interference — and let me know which enhancement you'd like next.
 
-| Browser | Support | Min Version |
-|---------|---------|------------|
-| Chrome/Chromium | ✅ Full | 90+ |
-| Firefox | ✅ Full | 88+ |
-| Safari | ✅ Full | 14+ |
-| Edge | ✅ Full | 90+ |
-| Mobile (iOS/Android) | ✅ Full | Native browsers |
-
----
-
-## 🏠 Offline-First
-
-WaveSync is fully functional offline:
-- ✅ No internet required after first load
-- ✅ No backend server needed
-- ✅ All computation happens in-browser
-- ✅ Perfect for classrooms, labs, or anywhere
-
----
-
-## 📝 License & Attribution
-
-Built for the **National PhysXHackathon 2026**
-
----
-
-## 🎯 Quick Tips
-
-- **Explore Presets**: Click scenario buttons to instantly see different interference patterns
-- **Fine-Tune**: Use sliders for precise wavelength and amplitude control
-- **Drag Sources**: Click and drag the wave source origins to reposition them
-- **Export Work**: Capture interesting patterns as PNG images
-- **Learn Physics**: Read the equation overlay to connect math to visualization
-
----
-
-**Enjoy exploring the beautiful physics of wave interference! 🌊**
+**— The WaveSync Team**
+For better development experience with live reload:

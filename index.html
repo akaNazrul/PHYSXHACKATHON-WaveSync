@@ -63,52 +63,17 @@
           </svg>
         </div>
 
-        <!-- Wi-Fi Floor Plan Blueprint -->
-        <div id="overlay-wifi" class="preset-overlay">
-          <!-- House floor plan graphic -->
-          <svg class="blueprint-svg" viewBox="0 0 400 400" fill="none" stroke="rgba(6, 182, 212, 0.3)" stroke-width="2">
-            <!-- Room walls -->
-            <path d="M 20,20 L 380,20 L 380,380 L 20,380 Z" />
-            <path d="M 150,20 L 150,150 L 20,150" />
-            <path d="M 250,380 L 250,200 L 380,200" />
-            <!-- Router placement icon (center) -->
-            <circle cx="200" cy="200" r="15" stroke-dasharray="2 4" />
-          </svg>
-        </div>
+        <!-- (Wi-Fi preset removed) -->
       </div>
 
       <div id="source-a-indicator" class="source-indicator" title="Source A"></div>
       <div id="source-b-indicator" class="source-indicator" title="Source B"></div>
       
-      <!-- Draggable Phone Receiver (B-01/D-03) Context -->
-      <div id="phone-indicator" class="phone-indicator" title="Drag to test signal">
-        <i data-lucide="smartphone"></i>
-        <div class="signal-bar">
-          <div id="phone-signal-fill" class="signal-fill"></div>
-        </div>
-      </div>
       </div>
       
       <!-- HUD Top Bar Container -->
       <div class="hud-top-bar">
-        <!-- Analytical Validation Panel -->
-        <div class="analytics-panel" id="analytics-panel">
-          <div class="analytics-title">Theoretical Validation</div>
-          <div class="analytics-body" id="analytics-body">
-            <div class="analytics-row">
-              <span>Fringe Spacing (y):</span>
-              <span id="stat-fringe" class="stat-val">--</span>
-            </div>
-            <div class="analytics-row">
-              <span>Phase Diff (Δφ):</span>
-              <span id="stat-phasediff" class="stat-val">--</span>
-            </div>
-            <div class="analytics-row">
-              <span>Peak Intensity:</span>
-              <span id="stat-peak" class="stat-val">--</span>
-            </div>
-          </div>
-        </div>
+        <!-- (Theoretical Validation panel removed) -->
 
         <!-- 1D Cross-Section Graph (Tier D-02) -->
         <div class="graph-panel" id="graph-panel">
@@ -227,6 +192,7 @@
               <span class="val-display" id="val-slit-width">12</span>
             </div>
             <input type="range" id="slit-width" class="control-slider" min="4" max="40" step="1" value="12">
+            <div style="font-size: 10px; color: #94a3b8; margin-top: 4px;">Narrower slit -> wider diffraction spread</div>
           </div>
           <div class="control-group">
             <div class="control-header">
@@ -247,16 +213,13 @@
           <button id="preset-noise" class="btn">
             <i data-lucide="headphones" width="14" height="14"></i> Active Noise Cancellation
           </button>
-          <button id="preset-wifi" class="btn">
-            <i data-lucide="wifi" width="14" height="14"></i> Wi-Fi Dead Zones
-          </button>
         </div>
 
         <div class="section-title" style="color: var(--color-ui-text); margin-top: 20px;">Assumptions & Limitations</div>
         <div style="font-size: 11px; color: #64748b; line-height: 1.4;">
           • Model is 2D only (real waves expand spherically in 3D).<br>
           • Assumes an ideal medium (no resistance/damping).<br>
-          • Excludes diffraction through boundaries or edge reflection.
+          • Excludes boundary reflections; Young's preset includes a finite-slit diffraction approximation.
         </div>
       </div>
     </aside>
