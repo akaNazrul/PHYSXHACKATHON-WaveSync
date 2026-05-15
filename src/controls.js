@@ -55,12 +55,7 @@ export function initControls() {
     document.getElementById('equation-display').classList.toggle('visible', state.ui.showEquations);
   });
   
-  // Display Mode
-  document.getElementsByName('display-mode').forEach(radio => {
-    radio.addEventListener('change', (e) => {
-      state.ui.displayMode = e.target.value;
-    });
-  });
+
 
   // Double Slit Controls
   const slitWidthEl = document.getElementById('slit-width');
@@ -218,7 +213,7 @@ function updateEquationDisplay() {
     <span class="equation-var-a">${s0.amplitude}</span>sin(k·r₁ - 
     ${(2 * Math.PI * s0.frequency).toFixed(1)}t + ${s0.phase}°) + <br>
     <span class="equation-var-b">${s1.amplitude}</span>sin(k·r₂ - 
-    ${(2 * Math.PI * s1.frequency).toFixed(1)}t + ${s1. phase}°)
+    ${(2 * Math.PI * s1.frequency).toFixed(1)}t + ${s1.phase}°)
   `;
 }
 

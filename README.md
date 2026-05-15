@@ -15,7 +15,7 @@
 ---
 
 ## 🔬 Scientific Validation & Performance
-- **Live Numerical Validation:** Real-time calculation of analytical expected continuous values. Compares simulated fringe spacing ($y = \lambda L / d$) and phase differences to textbook formulas.
+- **Live Numerical Validation:** Real-time calculation of analytical expected values. Compares simulated fringe spacing in the Young's preset ($y = \lambda L / d$) and phase differences to textbook formulas.
 - **60 FPS Rendering:** Highly optimized Javascript loops over 160,000 spatial pixels every 16ms guaranteeing 60 fps limit natively in browser.
 
 ## ⚠️ Assumptions & Limitations
@@ -35,7 +35,7 @@ To run natively in the browser without massive overhead:
 
 ### 🎛️ **WiFi Array Preset (Phase Array Beamforming)**
 The **Wi-Fi Array preset** simulates a real-world phased antenna array. This connects directly to how 5G and modern Wi-Fi routers dynamically steer signal beams without moving parts:
-- **How it works:** Two antennas (sources) are placed close together (separated by half a wavelength). By adjusting the signal emitting from one antenna to be exactly 90° out of phase with the other, they naturally form constructive interference in one specific direction and destructive interference in another!
+- **How it works:** Two antennas (sources) are placed close together and the demo uses a fixed phase offset to shape the interference field. The current layout spaces the antennas by one wavelength in the simulated grid.
 - **Real-world connection:** This technique "focuses" the internet connection directly towards your device rather than radiating it equally in all directions, saving energy and providing faster speeds. Use the draggable phone icon to probe the signal strength!
 
 ### 🎛️ **Interactive Controls**
@@ -69,7 +69,7 @@ The **Wi-Fi Array preset** simulates a real-world phased antenna array. This con
 | **Styling** | CSS3 with CSS Variables |
 | **Architecture** | Vanilla JS Modules (Zero Dependencies) |
 | **Deployment** | GitHub Pages with GitHub Actions |
-| **Physics** | Direct wave equation computation |
+| **Physics** | Radial superposition with visual attenuation |
 
 **Why Vanilla JS?** Zero bloat, instant load times, and pure physics computation without the overhead of frameworks.
 
@@ -106,7 +106,7 @@ PHYSXHACKATHON-WaveSync/
 | File | Purpose |
 |------|---------|
 | `main.js` | Initialize app, manage `requestAnimationFrame` loop, coordinate modules |
-| `physics.js` | Core wave equation math: $y = A \sin(kx - \omega t + \phi)$ for dual sources |
+| `physics.js` | Core wave equation math: $\Psi(r,t) = \sum_i A_i \sin(kr_i - \omega t + \phi_i)$ |
 | `renderer.js` | Compute heatmap, draw canvas, handle color mapping |
 | `controls.js` | Handle slider inputs, mouse/touch events, UI responses |
 | `state.js` | Centralized state store for wavelength, amplitude, phase, positions |
@@ -168,14 +168,15 @@ WaveSync computes real-time interference using the **superposition principle**:
 
 For two coherent wave sources with equal frequency:
 
-$$y_{total}(x,t) = A_1 \sin(kx - \omega t + \phi_1) + A_2 \sin(kx - \omega t + \phi_2)$$
+$$\Psi(x,y,t) = A_1 \sin(kr_1 - \omega t + \phi_1) + A_2 \sin(kr_2 - \omega t + \phi_2)$$
 
 Where:
+- $r_i$ = Distance from the field point to source $i$
 - $A$ = Amplitude (wave height)
 - $k$ = Wave number (related to wavelength)
 - $\omega$ = Angular frequency
 - $\phi$ = Phase offset
-- Interference intensity: $I = |A_1 + A_2|^2$ (constructive at peaks, destructive at troughs)
+- Interference intensity at a point scales as $I \propto |\Psi|^2$; the fully constructive two-source peak is $(A_1 + A_2)^2$
 
 ### Rendering Pipeline
 1. **Input**: Wavelength, amplitudes, phase, source positions

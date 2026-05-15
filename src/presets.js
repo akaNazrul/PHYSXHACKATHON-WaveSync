@@ -70,7 +70,7 @@ function applyNoiseCancellation() {
 }
 
 function applyWiFiBeamforming() {
-  // Wi-Fi phased array: Two antennas separated by half a wavelength to create a directional beam 
+  // Wi-Fi phased array: Two antennas spaced one wavelength apart in the demo layout.
   state.sources[0] = { x: CANVAS_WIDTH / 2 - 12.5, y: CANVAS_HEIGHT / 2, frequency: 2.0, amplitude: 1.0, phase: 0 };
   state.sources[1] = { x: CANVAS_WIDTH / 2 + 12.5, y: CANVAS_HEIGHT / 2, frequency: 2.0, amplitude: 1.0, phase: 90 };
   state.ui.phone = { x: 300, y: 100 }; // Ensure phone is positioned nicely

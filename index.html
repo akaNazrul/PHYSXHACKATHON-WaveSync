@@ -10,10 +10,10 @@
 <body>
   <!-- Problem Statement Banner (Hackathon Core Requirement) -->
   <div class="problem-banner">
-    <p><strong>Mission:</strong> WaveSync helps students, educators, and engineers develop intuition for wave interference — the physics behind Wi-Fi, noise cancellation, and medical ultrasound.</p>
+    <p><strong>Mission:</strong> WaveSync bridges the gap between abstract physics theory and real-time computational simulation. It enables students, educators, and engineers to visualize complex wave interference through interactive exploration. </p>
   </div>
 
-  <!-- Onboarding Modal -->
+  <!-- Onboarding pages -->
   <div id="onboarding-modal" class="modal-overlay">
     <div class="modal-content">
       <h2 class="modal-title">Welcome to WaveSync</h2>
@@ -219,13 +219,6 @@
 
       <!-- Presets -->
       <div class="section" style="border-bottom:none">
-        <div class="section-title" style="color: var(--color-ui-text)">Display Mode</div>
-        <div class="radio-settings" style="margin-bottom: 20px; display: flex; gap: 10px; font-size: 13px;">
-          <label><input type="radio" name="display-mode" value="waves" checked> Waves</label>
-          <label><input type="radio" name="display-mode" value="particles"> Particles</label>
-          <label><input type="radio" name="display-mode" value="both"> Both</label>
-        </div>
-
         <div id="slit-controls" style="display: none;">
           <div class="section-title" style="color: var(--color-ui-text)">Double Slit Properties</div>
           <div class="control-group">
@@ -243,6 +236,7 @@
             <input type="range" id="slit-sep" class="control-slider" min="20" max="100" step="1" value="40">
           </div>
         </div>
+
 
         <div class="section-title" style="color: var(--color-ui-text); margin-top: 20px;">Real-World Scenarios</div>
         <div class="preset-descriptions" id="preset-desc" style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">Select a scenario to load configuration...</div>
