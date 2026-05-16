@@ -9,7 +9,7 @@ export function attachExporter() {
       
       // Construct dynamic filename with timestamp
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const filename = `wavesync-export-${timestamp}.png`;
+      const filename = `ombaksim-export-${timestamp}.png`;
       
       // Auto-trigger synthetic download interaction 
       const a = document.createElement('a');

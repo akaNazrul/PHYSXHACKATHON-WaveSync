@@ -1,18 +1,20 @@
-# 🌊 WaveSync — Wave Interference Explorer
+# 🌊 OmbakSim — Wave Interference Explorer
 
-**WaveSync** is a compact, zero-dependency browser app that simulates **real-time 2D wave interference** for education and experimentation.
+**OmbakSim** is a compact, zero-dependency browser app that simulates **real-time 2D wave interference** for education and experimentation.
 
-**Launch Live App:** https://akanazrul.github.io/PHYSXHACKATHON-WaveSync/
+**Launch Live App:** https://akanazrul.github.io/PHYSXHACKATHON-OmbakSim/
+
+**GitHub Repo:** https://github.com/akaNazrul/PHYSXHACKATHON-OmbakSim
 
 ---
 
 ## Mission
 
-WaveSync helps students and engineers build intuition for wave interference (superposition), connecting directly to real-world phenomena like **noise cancellation** and other coherent-wave applications.
+OmbakSim helps students and engineers build intuition for wave interference (superposition), connecting directly to real-world phenomena like **noise cancellation** and other coherent-wave applications.
 
 ---
 
-## What WaveSync simulates (current functionality)
+## What OmbakSim simulates (current functionality)
 
 The simulation renders an amplitude field over a **fixed 2D grid (400×400)**. It models waves as a sum of contributions from a small set of moving/placed coherent sources.
 
@@ -24,7 +26,7 @@ Current preset scenarios are:
 
 ## Physics & Equations
 
-WaveSync computes the total **scalar wave amplitude** at each grid point (x, y) and time t:
+OmbakSim computes the total **scalar wave amplitude** at each grid point (x, y) and time t:
 
 $$
 \\Psi(x,y,t)=\\sum_i \\psi_i(x,y,t)
@@ -66,7 +68,7 @@ $$
 
 ### 3) Young’s finite-slit diffraction envelope (only in `youngs` preset)
 
-When `state.ui.activePreset === 'youngs'`, WaveSync applies a **sinc diffraction envelope** based on the finite slit width `a = state.ui.slitWidth` (measured in pixels in the sim).
+When `state.ui.activePreset === 'youngs'`, OmbakSim applies a **sinc diffraction envelope** based on the finite slit width `a = state.ui.slitWidth` (measured in pixels in the sim).
 
 The code approximates the geometry factor using:
 $$
@@ -121,7 +123,7 @@ Then:
 
 ### Note on intensity vs amplitude
 In physics, intensity is often proportional to $|\\Psi|^2$.
-WaveSync’s current visualization instead uses **amplitude normalization** for clarity and teaching. (If you want a strict intensity mode, the change would be in the renderer’s mapping step.)
+OmbakSim’s current visualization instead uses **amplitude normalization** for clarity and teaching. (If you want a strict intensity mode, the change would be in the renderer’s mapping step.)
 
 ---
 

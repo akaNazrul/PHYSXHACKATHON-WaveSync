@@ -6,7 +6,7 @@ import { resetState, state } from './state.js';
 import { computeSuperposition } from './physics.js';
 
 function boot() {
-  console.log('[WaveSync] Bootstrapping...');
+  console.log('[OmbakSim] Bootstrapping...');
   
   // Initialize Lucide icons
   if (window.lucide) {
